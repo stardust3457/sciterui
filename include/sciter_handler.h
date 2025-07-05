@@ -8,6 +8,13 @@ __interface IClickSink
 };
 static const char * IID_ICLICKSINK = "591A7458-0F80-4A52-A68E-89B1E4F16FB3";
 
+__interface IMouseUpDownSink
+{
+    bool OnMouseUp(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t x, uint32_t y) = 0;
+    bool OnMouseDown(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t x, uint32_t y) = 0;
+};
+static const char * IID_IMOUSEUPDOWNSINK = "4C82DCC8-FEC7-4F74-A0EC-399F56742F59";
+
 enum SciterKeys : uint32_t
 {
     SCITER_KEY_SPACE = 32,

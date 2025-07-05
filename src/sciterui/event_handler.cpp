@@ -69,8 +69,7 @@ int EventHandler::ClickHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, voi
             element.SetState(0, SciterElement::STATE_PRESSED, true);
             if (handler->m_InElement)
             {
-                clickSink->OnClick(he, p->target, BY_MOUSE_CLICK);
-                return true;
+                return clickSink->OnClick(he, p->target, BY_MOUSE_CLICK);
             }
         }
         else if (p->cmd == MOUSE_MOVE)
@@ -102,9 +101,38 @@ int EventHandler::ClickHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, voi
     return false;
 }
 
+int EventHandler::MousedUpDownHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms)
+{
+    EventHandler * handler = (EventHandler*)tag;
+    IMouseUpDownSink * mouseUpDownSink = handler != nullptr ? (IMouseUpDownSink*)handler->m_Interface : nullptr;
+    if (evtg == SUBSCRIPTIONS_REQUEST && handler != nullptr)
+    {
+        uint32_t* p = (uint32_t*)prms;
+        *p = handler->m_Subscription;
+        return true;
+    }
+    else if (evtg == HANDLE_INITIALIZATION)
+    {
+        return true;
+    }
+    else if (evtg == HANDLE_MOUSE && mouseUpDownSink)
+    {
+        MOUSE_PARAMS * p = (MOUSE_PARAMS*)prms;
+        if (p->cmd == MOUSE_DOWN || p->cmd == ((uint32_t)MOUSE_DOWN | (uint32_t)SINKING))
+        {
+            return mouseUpDownSink->OnMouseDown(he, p->target, p->pos.x, p->pos.y);
+        }
+        if (p->cmd == MOUSE_UP || p->cmd == ((uint32_t)MOUSE_UP | (uint32_t)SINKING))
+        {
+            return mouseUpDownSink->OnMouseUp(he, p->target, p->pos.x, p->pos.y);
+        }
+    }
+    return false;
+}
+
 int EventHandler::KeyHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms)
 {
-    EventHandler* handler = (EventHandler*)tag;
+    EventHandler * handler = (EventHandler *)tag;
     if (evtg == SUBSCRIPTIONS_REQUEST && handler != nullptr)
     {
         uint32_t * p = (uint32_t *)prms;

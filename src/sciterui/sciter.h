@@ -62,18 +62,21 @@ public:
     bool Initialize(const char * baseLanguage, const char * currentLanguage, bool console);
     void WindowCreated(SciterWindow * window);
     void WindowDestroyed(SciterWindow * window);
+    uint32_t AttachWidget(LPSCN_ATTACH_BEHAVIOR lpab);
 
     // ISciterUI
-    bool AttachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface);
-    std::shared_ptr<void> GetElementInterface(SCITER_ELEMENT he, const char * riid);
-    bool SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri);
-    bool WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window);
-    bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss);
-    uint32_t AttachWidget(LPSCN_ATTACH_BEHAVIOR lpab);
-    void UpdateWindow(HWINDOW hwnd);
-    void Run();
-    void Stop();
-    void Shutdown();
+    bool AttachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface) override;
+    std::shared_ptr<void> GetElementInterface(SCITER_ELEMENT he, const char * riid) override;
+    bool SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri) override;
+    bool WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window) override;
+    void PopupShow(SCITER_ELEMENT hePopup, SCITER_ELEMENT heAnchor, uint32_t placement) override;
+    void PopupShowAt(SCITER_ELEMENT hePopup, SCITER_POINT pos, uint32_t placement) override;
+    void PopupHide(SCITER_ELEMENT he) override;
+    bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss) override;
+    void UpdateWindow(HWINDOW hwnd) override;
+    void Run() override;
+    void Stop() override;
+    void Shutdown() override;
 
     ResourceManager & GetResourceManager(void);
 #ifdef WIN32

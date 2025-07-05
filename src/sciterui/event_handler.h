@@ -16,6 +16,7 @@ public:
 
     static int SCITER_CALLBACK ClickHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms);
     static int SCITER_CALLBACK KeyHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms);
+    static int SCITER_CALLBACK MousedUpDownHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms);
     static int SCITER_CALLBACK ResizeHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms);
     static int SCITER_CALLBACK ForwardBehaviorHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms);
     static int SCITER_CALLBACK StateChangeHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms);

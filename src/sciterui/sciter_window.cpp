@@ -210,6 +210,11 @@ bool SciterWindow::GetEventProc(const char * riid, LPELEMENT_EVENT_PROC & eventP
         eventProc = &EventHandler::ClickHandler;
         subscription = HANDLE_MOUSE | HANDLE_BEHAVIOR_EVENT;
     }
+    else if (strcmp(IID_IMOUSEUPDOWNSINK, riid) == 0)
+    {
+        eventProc = &EventHandler::MousedUpDownHandler;
+        subscription = HANDLE_MOUSE;
+    }
     else if (strcmp(IID_IKEYSINK, riid) == 0)
     {
         eventProc = &EventHandler::KeyHandler;

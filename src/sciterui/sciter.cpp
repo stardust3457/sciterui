@@ -119,6 +119,24 @@ bool Sciter::WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, i
     return true;
 }
 
+void Sciter::PopupShow(SCITER_ELEMENT hePopup, SCITER_ELEMENT heAnchor, uint32_t placement)
+{
+    SciterShowPopup((HELEMENT)hePopup, (HELEMENT)heAnchor, placement);
+}
+
+void Sciter::PopupShowAt(SCITER_ELEMENT hePopup, SCITER_POINT pos, uint32_t placement)
+{
+    POINT point;
+    point.x = pos.x;
+    point.y = pos.y;
+    SciterShowPopupAt((HELEMENT)hePopup, point, placement);
+}
+
+void Sciter::PopupHide(SCITER_ELEMENT he)
+{
+    SciterHidePopup((HELEMENT)he);
+}
+
 bool Sciter::RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss)
 {
     if (name == nullptr || createWidget == nullptr)

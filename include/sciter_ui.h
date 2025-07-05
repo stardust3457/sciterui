@@ -4,6 +4,12 @@
 typedef const void * SCITER_ELEMENT;
 typedef const void * HWINDOW;
 
+typedef struct
+{
+    int32_t x;
+    int32_t y;
+} SCITER_POINT;
+
 __interface IWindowDestroySink
 {
     void OnWindowDestroy(HWINDOW hWnd);
@@ -48,6 +54,9 @@ __interface ISciterUI
     std::shared_ptr<void> GetElementInterface(SCITER_ELEMENT elemHandle, const char * riid) = 0;
     bool SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri) = 0;
     bool WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window) = 0;
+    void PopupShow(SCITER_ELEMENT hePopup, SCITER_ELEMENT heAnchor, uint32_t placement) = 0;
+    void PopupShowAt(SCITER_ELEMENT hePopup, SCITER_POINT pos, uint32_t placement) = 0;
+    void PopupHide(SCITER_ELEMENT he) = 0;
     bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss) = 0;
     void UpdateWindow(HWINDOW hwnd) = 0;
     void Run() = 0;
