@@ -148,6 +148,11 @@ void SciterElement::SetAttribute(const char * name, const char * value) const
     SciterSetAttributeByName((HELEMENT)m_he, name, SciterUI::stdstr(value).ToUTF16().c_str());
 }
 
+void SciterElement::RemoveAttribute(const char* name) const
+{
+    SciterSetAttributeByName((HELEMENT)m_he, name, 0);
+}
+
 HWINDOW SciterElement::GetElementHwnd(bool RootWindow) const
 {
     HWINDOW hwnd = 0;
@@ -296,9 +301,9 @@ void SciterElement::SetState(uint32_t BitsToSet, uint32_t BitsToClear, bool Upda
     (void)r;
 }
 
-void SciterElement::SetStyleAttribute(const char* Name, const wchar_t* Value) const
+void SciterElement::SetStyleAttribute(const char* Name, const char * Value) const
 {
-    SCDOM_RESULT r = SciterSetStyleAttribute((HELEMENT)m_he, Name, Value);
+    SCDOM_RESULT r = SciterSetStyleAttribute((HELEMENT)m_he, Name, SciterUI::stdstr(Value).ToUTF16().c_str());
     assert(r == SCDOM_OK);
     (void)r;
 }

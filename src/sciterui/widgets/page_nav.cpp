@@ -241,15 +241,15 @@ void WidgetPageNav::ShowPage(CPage * page)
     if (page->Content.IsValid())
     {
         m_targetFrame.Insert(page->Content, m_targetFrame.GetChildCount());
-        page->Content.SetStyleAttribute("display", L"block");
+        page->Content.SetStyleAttribute("display", "block");
     }
     else
     {
         SciterElement& Content = page->Content;
         Content.Create("div", "");
         m_targetFrame.Insert(Content, m_targetFrame.GetChildCount());
-        Content.SetStyleAttribute("width", L"100%%");
-        Content.SetStyleAttribute("height", L"100%%");
+        Content.SetStyleAttribute("width", "100%%");
+        Content.SetStyleAttribute("height", "100%%");
         if (page->PageExternal)
         {
             m_sciterUI.SetElementHtmlFromResource(page->Content, page->PageContents.c_str());

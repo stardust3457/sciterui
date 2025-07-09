@@ -112,6 +112,7 @@ public:
     SciterElement FindFirst(const char * selector, ...) const;
     std::string GetAttribute(const char * name) const;
     void SetAttribute(const char * name, const char * value) const;
+    void RemoveAttribute(const char* name) const;
     std::string GetAttributeByName(const char* id) const;
     SCITER_ELEMENT GetChild(uint32_t Index) const;
     uint32_t GetChildCount() const;
@@ -130,7 +131,7 @@ public:
     void SetHTML(const uint8_t * hHtml, size_t htmlLength, int where = SIH_REPLACE_CONTENT) const;
     RECT GetLocation(uint32_t area = ROOT_RELATIVE | CONTENT_BOX) const;
     void SetState(uint32_t bitsToSet, uint32_t bitsToClear, bool update) const;
-    void SetStyleAttribute(const char* Name, const wchar_t* Value) const;
+    void SetStyleAttribute(const char * Name, const char * Value) const;
     void SetValue(SciterValue value) const;
     SciterValue Eval(const char * script);
 
