@@ -20,7 +20,9 @@ public:
     ~SciterValue();
 
     bool isInt(void) const;
+    bool isString(void) const;
     int32_t GetValueInt(void) const;
+    const std::string & GetValueStr(void) const;
 
 private:
     uint32_t m_type;

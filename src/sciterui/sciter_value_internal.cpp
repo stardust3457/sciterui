@@ -47,6 +47,10 @@ sciter::value ConvertFromSciterValue(const SciterValue & rv)
     {
         return sciter::value(rv.GetValueInt());
     }
+    if (rv.isString())
+    {
+        return sciter::value(rv.GetValueStr());
+    }
     __debugbreak();
     return sciter::value();
 }
