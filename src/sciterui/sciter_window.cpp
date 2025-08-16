@@ -28,8 +28,11 @@ SciterWindow::~SciterWindow()
 
 bool SciterWindow::Create(HWINDOW parentWinow, const char * htmlFile, int x, int y, int width, int height, unsigned int flags)
 {
+    bool childWindow = parentWinow != nullptr && (flags & SUIW_CHILD) != 0;
 #ifdef WIN32
-    m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, m_sciter.WindowClass().c_str(), L"", WS_CLIPCHILDREN | WS_CLIPSIBLINGS, x, y, width, height, (HWND)parentWinow, nullptr, GetModuleHandle(nullptr), &m_sciter);
+    DWORD exStyle = childWindow ? (WS_EX_DLGMODALFRAME | WS_EX_TOOLWINDOW) : WS_EX_APPWINDOW;
+    DWORD style = childWindow ? (DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS) : (WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+    m_hWnd = CreateWindowEx(exStyle, m_sciter.WindowClass().c_str(), L"", style, x, y, width, height, (HWND)parentWinow, nullptr, GetModuleHandle(nullptr), &m_sciter);
 #else
     RECT Frame;
     Frame.left = x;
@@ -41,7 +44,7 @@ bool SciterWindow::Create(HWINDOW parentWinow, const char * htmlFile, int x, int
 #endif
     if (m_hWnd != nullptr)
     {
-        if (parentWinow != nullptr && (flags & SUIW_CHILD) != 0)
+        if (childWindow)
         {
             m_hParent = parentWinow;
             EnableWindow((HWND)parentWinow, FALSE);
@@ -50,11 +53,6 @@ bool SciterWindow::Create(HWINDOW parentWinow, const char * htmlFile, int x, int
         m_sciter.WindowCreated(this);
         LoadHtml(htmlFile);
         ::SciterWindowExec((HWND)m_hWnd, SCITER_WINDOW_SET_STATE, SCITER_WINDOW_STATE_SHOWN, 0);
-
-        UINT width = SciterGetMinWidth((HWND)m_hWnd);
-        UINT height = SciterGetMinHeight((HWND)m_hWnd, width);
-        int a = 5;
-        a = 6;
     }
     return m_hWnd != nullptr;
 }
