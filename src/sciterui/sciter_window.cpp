@@ -185,6 +185,31 @@ bool SciterWindow::AttachHandler(SCITER_ELEMENT element, const char * riid, void
     return false;
 }
 
+bool SciterWindow::DetachHandler(SCITER_ELEMENT Element, const char * riid, void * interfacePtr)
+{
+    if (m_destroyed)
+    {
+        return false;
+    }
+
+    RegisteredSink Sink(Element, riid, interfacePtr, nullptr);
+    EventSinks::iterator iter = std::find(m_eventSinks.begin(), m_eventSinks.end(), Sink);
+    bool result = false;
+    if (iter != m_eventSinks.end())
+    {
+        EventHandler * handler = iter->Sink.get();
+        LPELEMENT_EVENT_PROC EventProc = nullptr;
+        UINT Subscription = 0;
+        if (GetEventProc(riid, EventProc, Subscription))
+        {
+            SCDOM_RESULT r = SciterDetachEventHandler((HELEMENT)Element, (::LPELEMENT_EVENT_PROC)EventProc, handler);
+            result = r == SCDOM_OK;
+        }
+        m_eventSinks.erase(iter);
+    }
+    return result;
+}
+
 void SciterWindow::Bind()
 {
     if (m_hWnd && !m_bound)
@@ -208,9 +233,19 @@ bool SciterWindow::GetEventProc(const char * riid, LPELEMENT_EVENT_PROC & eventP
         eventProc = &EventHandler::ClickHandler;
         subscription = HANDLE_MOUSE | HANDLE_BEHAVIOR_EVENT;
     }
+    else if (strcmp(IID_ITIMERSINK, riid) == 0)
+    {
+        eventProc = &EventHandler::TimerHandler;
+        subscription = HANDLE_TIMER;
+    }
     else if (strcmp(IID_IMOUSEUPDOWNSINK, riid) == 0)
     {
         eventProc = &EventHandler::MousedUpDownHandler;
+        subscription = HANDLE_MOUSE;
+    }
+    else if (strcmp(IID_IMOUSEMOVESINK, riid) == 0)
+    {
+        eventProc = &EventHandler::MousedMoveHandler;
         subscription = HANDLE_MOUSE;
     }
     else if (strcmp(IID_IKEYSINK, riid) == 0)

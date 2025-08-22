@@ -15,6 +15,12 @@ __interface IMouseUpDownSink
 };
 static const char * IID_IMOUSEUPDOWNSINK = "4C82DCC8-FEC7-4F74-A0EC-399F56742F59";
 
+__interface IMouseMoveSink
+{
+    bool OnMouseMove(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t x, uint32_t y);
+};
+static const char * IID_IMOUSEMOVESINK = "BA281D38-FED5-46B1-BD95-3584C37107E4";
+
 enum SciterKeys : uint32_t
 {
     SCITER_KEY_SPACE = 32,
@@ -160,3 +166,9 @@ __interface IStateChangeSink
     bool OnStateChange(SCITER_ELEMENT elem, uint32_t eventReason, void * data) = 0;
 };
 static const char * IID_ISTATECHANGESINK = "C2534439-8130-400A-A0F9-B4E5B1B1952B";
+
+__interface ITimerSink
+{
+    bool OnTimer(SCITER_ELEMENT Element, uint32_t * TimerId);
+};
+static const char * IID_ITIMERSINK = "9B8F8D75-6C09-40D8-AB24-6C2849A2F07E";

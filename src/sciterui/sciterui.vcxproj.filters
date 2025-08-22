@@ -75,6 +75,9 @@
     <ClCompile Include="widgets\combo_box.cpp">
       <Filter>Source Files\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="widgets\tooltip_host.cpp">
+      <Filter>Source Files\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sciter.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="sciter_handler_internal.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\widgets\tooltip_host.h">
+      <Filter>include\widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

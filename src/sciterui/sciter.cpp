@@ -51,6 +51,29 @@ bool Sciter::AttachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * 
     return false;
 }
 
+bool Sciter::DetachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface)
+{
+    if (elemHandle == nullptr || pinterface == nullptr)
+    {
+        return false;
+    }
+    HWINDOW hWnd = SciterElement(elemHandle).GetElementHwnd(true);
+    for (WindowSet::const_iterator itr = m_windows.begin(); itr != m_windows.end(); itr++)
+    {
+        SciterWindow * Window = *itr;
+        if (Window->GetHandle() != hWnd)
+        {
+            continue;
+        }
+        if (Window->DetachHandler(elemHandle, riid, pinterface))
+        {
+            return true;
+        }
+        break;
+    }
+    return false;
+}
+
 std::shared_ptr<void> Sciter::GetElementInterface(SCITER_ELEMENT he, const char * riid)
 {
     if (he == nullptr)

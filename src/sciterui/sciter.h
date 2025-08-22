@@ -66,6 +66,7 @@ public:
 
     // ISciterUI
     bool AttachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface) override;
+    bool DetachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface) override;
     std::shared_ptr<void> GetElementInterface(SCITER_ELEMENT he, const char * riid) override;
     bool SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri) override;
     bool WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window) override;

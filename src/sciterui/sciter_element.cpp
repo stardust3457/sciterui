@@ -145,7 +145,9 @@ std::string SciterElement::GetAttribute(const char * name) const
 
 void SciterElement::SetAttribute(const char * name, const char * value) const
 {
-    SciterSetAttributeByName((HELEMENT)m_he, name, SciterUI::stdstr(value).ToUTF16().c_str());
+    SCDOM_RESULT r = SciterSetAttributeByName((HELEMENT)m_he, name, SciterUI::stdstr(value).ToUTF16().c_str());
+    assert(r == SCDOM_OK);
+    (void)r;
 }
 
 void SciterElement::RemoveAttribute(const char* name) const
@@ -304,6 +306,13 @@ void SciterElement::SetState(uint32_t BitsToSet, uint32_t BitsToClear, bool Upda
 void SciterElement::SetStyleAttribute(const char* Name, const char * Value) const
 {
     SCDOM_RESULT r = SciterSetStyleAttribute((HELEMENT)m_he, Name, SciterUI::stdstr(Value).ToUTF16().c_str());
+    assert(r == SCDOM_OK);
+    (void)r;
+}
+
+void SciterElement::SetTimer(uint32_t milliseconds, uint32_t* timer_id) const
+{
+    SCDOM_RESULT r = SciterSetTimer((HELEMENT)m_he, milliseconds, (UINT_PTR)timer_id);
     assert(r == SCDOM_OK);
     (void)r;
 }

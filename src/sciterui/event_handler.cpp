@@ -101,6 +101,28 @@ int EventHandler::ClickHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, voi
     return false;
 }
 
+int EventHandler::TimerHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms)
+{
+    EventHandler * handler = (EventHandler*)tag;
+    ITimerSink* TimerSink = handler != nullptr ? (ITimerSink*)handler->m_Interface : nullptr;
+    if (evtg == SUBSCRIPTIONS_REQUEST && handler != nullptr)
+    {
+        UINT* p = (UINT*)prms;
+        *p = handler->m_Subscription;
+        return true;
+    }
+    if (evtg == HANDLE_INITIALIZATION)
+    {
+        return false;
+    }
+    if (evtg == HANDLE_TIMER)
+    {
+        TIMER_PARAMS* p = (TIMER_PARAMS*)prms;
+        return TimerSink->OnTimer(he, (uint32_t*)p->timerId);
+    }
+    return false;
+}
+
 int EventHandler::MousedUpDownHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms)
 {
     EventHandler * handler = (EventHandler*)tag;
@@ -125,6 +147,31 @@ int EventHandler::MousedUpDownHandler(void* tag, SCITER_ELEMENT he, uint32_t evt
         if (p->cmd == MOUSE_UP || p->cmd == ((uint32_t)MOUSE_UP | (uint32_t)SINKING))
         {
             return mouseUpDownSink->OnMouseUp(he, p->target, p->pos.x, p->pos.y);
+        }
+    }
+    return false;
+}
+
+int EventHandler::MousedMoveHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms)
+{
+    EventHandler * handler = (EventHandler*)tag;
+    IMouseMoveSink * mouseMoveSink = handler != nullptr ? (IMouseMoveSink*)handler->m_Interface : nullptr;
+    if (evtg == SUBSCRIPTIONS_REQUEST && handler != nullptr)
+    {
+        uint32_t* p = (uint32_t*)prms;
+        *p = handler->m_Subscription;
+        return true;
+    }
+    else if (evtg == HANDLE_INITIALIZATION)
+    {
+        return true;
+    }
+    else if (evtg == HANDLE_MOUSE && mouseMoveSink)
+    {
+        MOUSE_PARAMS * p = (MOUSE_PARAMS *)prms;
+        if (p->cmd == MOUSE_MOVE || p->cmd == ((uint32_t)MOUSE_MOVE | (uint32_t)SINKING))
+        {
+            return mouseMoveSink->OnMouseMove(he, p->target, p->pos.x, p->pos.y);
         }
     }
     return false;

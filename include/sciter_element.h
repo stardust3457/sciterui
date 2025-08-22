@@ -132,6 +132,7 @@ public:
     RECT GetLocation(uint32_t area = ROOT_RELATIVE | CONTENT_BOX) const;
     void SetState(uint32_t bitsToSet, uint32_t bitsToClear, bool update) const;
     void SetStyleAttribute(const char * Name, const char * Value) const;
+    void SetTimer(uint32_t milliseconds, uint32_t * timer_id) const;
     void SetValue(SciterValue value) const;
     SciterValue Eval(const char * script);
 

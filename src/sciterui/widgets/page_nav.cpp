@@ -65,20 +65,20 @@ private:
     void ShowPage(CPage * newPage);
 
     //IWidget
-    void Attached(SCITER_ELEMENT element, IBaseElement * baseElement);
-    void Detached(SCITER_ELEMENT element);
-    std::shared_ptr<void> GetInterface(const char * riid);
+    void Attached(SCITER_ELEMENT element, IBaseElement * baseElement) override;
+    void Detached(SCITER_ELEMENT element) override;
+    std::shared_ptr<void> GetInterface(const char * riid) override;
 
     // ISciterElementCallback
-    bool OnSciterElement(SCITER_ELEMENT he);
+    bool OnSciterElement(SCITER_ELEMENT he) override;
 
     // IClickSink
-    bool OnClick(SCITER_ELEMENT Element, SCITER_ELEMENT SourceElem, uint32_t EventReason);
+    bool OnClick(SCITER_ELEMENT Element, SCITER_ELEMENT SourceElem, uint32_t EventReason) override;
 
     // IPageNav
-    std::string GetCurrentPage();
-    void AddSink(IPagesSink * sink);
-    void RemoveSink(IPagesSink * sink);
+    std::string GetCurrentPage() override;
+    void AddSink(IPagesSink * sink) override;
+    void RemoveSink(IPagesSink * sink) override;
 
     static IWidget* __stdcall CreateWidget(ISciterUI& SciterUI);
 

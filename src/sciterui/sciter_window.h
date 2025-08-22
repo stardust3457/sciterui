@@ -72,6 +72,7 @@ public:
     bool GetDestroyed(void) const;
     void SetDestroyed(void);
     bool AttachHandler(SCITER_ELEMENT element, const char * riid, void * interfacePtr);
+    bool DetachHandler(SCITER_ELEMENT Element, const char * riid, void * interfacePtr);
 
     //ISciterWindow
     void CenterWindow() override;

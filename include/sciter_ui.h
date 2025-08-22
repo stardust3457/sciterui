@@ -51,6 +51,7 @@ enum SCITERUI_WINDOW_CREATE_FLAGS {
 __interface ISciterUI
 {
     bool AttachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface) = 0;
+    bool DetachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface) = 0;
     std::shared_ptr<void> GetElementInterface(SCITER_ELEMENT elemHandle, const char * riid) = 0;
     bool SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri) = 0;
     bool WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window) = 0;
