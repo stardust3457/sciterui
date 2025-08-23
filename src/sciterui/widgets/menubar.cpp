@@ -103,7 +103,6 @@ void WidgetMenuBar::SetMenuContent(MenuBarItemList & items) const
     }
     html += "</ul>";
     m_menuBarElem.SetHTML((const uint8_t *)html.data(), html.size(), SciterElement::SIH_REPLACE_CONTENT);
-    m_sciterUI.AttachHandler(m_menuBarElem, IID_ICLICKSINK, (IClickSink *)this);
 }
 
 void WidgetMenuBar::AddSink(IMenuBarSink * sink)
@@ -124,10 +123,12 @@ void WidgetMenuBar::Attached(SCITER_ELEMENT element, IBaseElement * baseElement)
 {
     m_baseElement = baseElement;
     m_menuBarElem = element;
+    m_sciterUI.AttachHandler(m_menuBarElem, IID_ICLICKSINK, (IClickSink*)this);
 }
 
 void WidgetMenuBar::Detached(SCITER_ELEMENT /*element*/)
 {
+    m_sciterUI.DetachHandler(m_menuBarElem, IID_ICLICKSINK, (IClickSink*)this);
     m_baseElement = nullptr;
     m_menuBarElem = nullptr;
 }
