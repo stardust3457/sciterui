@@ -266,6 +266,16 @@ LRESULT CALLBACK Sciter::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         SetWindowLongPtr(hwnd, 0, (LONG_PTR)pThis);
         break;
     }
+    case WM_ACTIVATE: {
+        HELEMENT h = 0;
+        SciterGetRootElement((HWND)hwnd, &h);
+        SciterElement root(h);
+        if (root.IsValid())
+        {
+            root.SetAttribute("data-active", wParam == WA_INACTIVE ? "false" : "true");
+        }
+        break;
+    }
     case WM_GETMINMAXINFO: {
         HELEMENT h = 0;
         SciterGetRootElement((HWND)hwnd, &h);
