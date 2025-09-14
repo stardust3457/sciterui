@@ -49,9 +49,11 @@ bool SciterWindow::Create(HWINDOW parentWinow, const char * htmlFile, int x, int
             m_hParent = parentWinow;
             EnableWindow((HWND)parentWinow, FALSE);
         }
+        SciterSetOption((HWND)m_hWnd, SCITER_SET_SCRIPT_RUNTIME_FEATURES, ALLOW_FILE_IO | ALLOW_SOCKET_IO | ALLOW_EVAL | ALLOW_SYSINFO);
 
         m_sciter.WindowCreated(this);
         LoadHtml(htmlFile);
+        SetDefaultWindowSize(x, y, width, height);
         ::SciterWindowExec((HWND)m_hWnd, SCITER_WINDOW_SET_STATE, SCITER_WINDOW_STATE_SHOWN, 0);
     }
     return m_hWnd != nullptr;
@@ -275,6 +277,16 @@ bool SciterWindow::GetEventProc(const char * riid, LPELEMENT_EVENT_PROC & eventP
         return false;
     }
     return true;
+}
+
+void SciterWindow::SetDefaultWindowSize(int x, int y, int width, int height)
+{
+    if (!m_hWnd)
+    {
+        return;
+    }
+
+    SetWindowPos((HWND)m_hWnd, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 }
 
 LRESULT SciterWindow::HandleNotification(LPSCITER_CALLBACK_NOTIFICATION pnm)

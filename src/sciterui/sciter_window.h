@@ -110,6 +110,7 @@ private:
     void Bind();
     bool LoadHtml(const char * url);
     bool GetEventProc(const char * riid, LPELEMENT_EVENT_PROC & eventProc, uint32_t & subscription);
+    void SetDefaultWindowSize(int x, int y, int width, int height);
     int64_t HandleNotification(LPSCITER_CALLBACK_NOTIFICATION pnm);
     int64_t OnLoadData(LPSCN_LOAD_DATA pnmld);
     int64_t OnAttachBehavior(LPSCN_ATTACH_BEHAVIOR pnmld);
