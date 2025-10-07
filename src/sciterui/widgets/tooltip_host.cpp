@@ -86,7 +86,7 @@ void WidgetToolTipHost::DisplayPopup(void)
     m_tooltipVisible = true;
 }
 
-bool WidgetToolTipHost::OnMouseMove(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t x, uint32_t y)
+bool WidgetToolTipHost::OnMouseMove(SCITER_ELEMENT /*element*/, SCITER_ELEMENT source, uint32_t /*x*/, uint32_t /*y*/)
 {
     if (m_popup.IsValid())
     {
@@ -164,7 +164,7 @@ bool WidgetToolTipHost::OnMouseMove(SCITER_ELEMENT element, SCITER_ELEMENT sourc
     return true;
 }
 
-bool WidgetToolTipHost::OnTimer(SCITER_ELEMENT Element, uint32_t* TimerId)
+bool WidgetToolTipHost::OnTimer(SCITER_ELEMENT /*Element*/, uint32_t* TimerId)
 {
     if (TimerId == (uint32_t*)TIMER_ID_SHOWTOOLTIP)
     {
@@ -197,7 +197,7 @@ bool WidgetToolTipHost::OnTimer(SCITER_ELEMENT Element, uint32_t* TimerId)
     return false;
 }
 
-void WidgetToolTipHost::Attached(SCITER_ELEMENT element, IBaseElement * baseElement)
+void WidgetToolTipHost::Attached(SCITER_ELEMENT element, IBaseElement * /*baseElement*/)
 {
     m_host = element;
     m_sciterUI.AttachHandler(element, IID_IMOUSEMOVESINK, (IMouseMoveSink*)this);
@@ -213,7 +213,7 @@ void WidgetToolTipHost::Detached(SCITER_ELEMENT /*element*/)
     m_anchor = nullptr;
 }
 
-std::shared_ptr<void> WidgetToolTipHost::GetInterface(const char* riid)
+std::shared_ptr<void> WidgetToolTipHost::GetInterface(const char * /*riid*/)
 {
     return nullptr;
 }

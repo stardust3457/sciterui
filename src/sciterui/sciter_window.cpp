@@ -101,9 +101,39 @@ void SciterWindow::CenterWindow(void)
     SetWindowPos((HWND)m_hWnd, 0, x, y, 0, 0, SWP_NOOWNERZORDER | SWP_NOSIZE);
 }
 
+void SciterWindow::FixMinSize()
+{
+    SciterUpdateWindow((HWND)m_hWnd);
+    RECT rc;
+    if (!GetWindowRect((HWND)m_hWnd, &rc))
+    {
+        return;
+    }
+    uint32_t minWidth = SciterGetMinWidth((HWND)m_hWnd);
+    uint32_t minHeight = SciterGetMinHeight((HWND)m_hWnd, minWidth);
+    uint32_t currentWidth = (rc.right - rc.left);
+    uint32_t currentHeight = (rc.bottom - rc.top);
+    uint32_t targetWidth = currentWidth < minWidth ? minWidth : currentWidth;
+    uint32_t targetHeight = currentHeight < minHeight ? minHeight : currentHeight;
+    if (currentWidth != targetWidth || currentHeight != targetHeight)
+    {
+        SetWindowPos((HWND)m_hWnd, 0, 0, 0, targetWidth, targetHeight, SWP_NOOWNERZORDER | SWP_NOMOVE);
+    }
+}
+
 HWINDOW SciterWindow::GetHandle() const
 {
     return m_hWnd;
+}
+
+uint32_t SciterWindow::GetMinWidth() const
+{
+    return SciterGetMinWidth((HWND)m_hWnd);
+}
+
+uint32_t SciterWindow::GetMinHeight(uint32_t width) const
+{
+    return SciterGetMinHeight((HWND)m_hWnd, width);
 }
 
 SCITER_ELEMENT SciterWindow::GetRootElement(void) const

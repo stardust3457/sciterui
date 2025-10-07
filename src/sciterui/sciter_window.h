@@ -76,7 +76,10 @@ public:
 
     //ISciterWindow
     void CenterWindow() override;
+    void FixMinSize() override;
     HWINDOW GetHandle() const override;
+    uint32_t GetMinWidth() const override;
+    uint32_t GetMinHeight(uint32_t width) const override;
     SCITER_ELEMENT GetRootElement() const override;
     void OnDestroySinkAdd(IWindowDestroySink * Sink) override;
     void OnDestroySinkRemove(IWindowDestroySink * Sink) override;
