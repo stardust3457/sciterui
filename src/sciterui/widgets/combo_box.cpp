@@ -33,6 +33,8 @@ namespace SciterUI
         //IComboBox
         int32_t AddItem(const char* item, const char * value) override;
         void ClearContents() override;
+        uint32_t GetCount() const override;
+        int32_t CurrentIndex() const override;
         SCITER_ELEMENT GetSelectedItem() const override;
         bool SelectItem(int32_t index) override;
 
@@ -133,6 +135,43 @@ namespace SciterUI
             popup.Clear();
         }
         m_items.clear();
+    }
+
+    uint32_t WidgetComboBox::GetCount() const
+    {
+        if (!m_select)
+        {
+            return 0;
+        }
+        SciterElement list = m_select.FindFirst("popup");
+        if (!list)
+        {
+            list = m_select;
+        }
+        return list.GetChildCount();
+    }
+
+    int32_t WidgetComboBox::CurrentIndex() const
+    {
+        if (!m_select)
+        {
+            return -1;
+        }
+        SciterElement list = m_select.FindFirst("popup");
+        if (!list)
+        {
+            list = m_select;
+        }
+
+        for (uint32_t i = 0, n = list.GetChildCount(); i < n; i++)
+        {
+            SciterElement option = list.GetChild(i);
+            if (option && (option.GetState() & SciterElement::STATE_CURRENT) != 0)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     SCITER_ELEMENT WidgetComboBox::GetSelectedItem() const
