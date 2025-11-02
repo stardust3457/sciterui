@@ -93,6 +93,57 @@ bool SciterElement::IsValid() const
     return m_he != 0;
 }
 
+void SciterElement::AddClassName(const char * value) const
+{
+    SciterUI::stdstr className(GetAttributeByName("class"));
+    SciterUI::strvector classes = className.Tokenize(' ');
+    for (SciterUI::strvector::iterator itr = classes.begin(); itr != classes.end(); itr++)
+    {
+        if (strcmp(itr->c_str(), value) == 0)
+        {
+            return;
+        }
+    }
+
+    if (!className.empty())
+    {
+        className += " ";
+    }
+    className += value;
+    SetAttribute("class", className.c_str());
+}
+
+void SciterElement::RemoveClassName(const char * value) const
+{
+    SciterUI::strvector classes = SciterUI::stdstr(GetAttributeByName("class")).Tokenize(' ');
+    bool update = false;
+    for (SciterUI::strvector::iterator itr = classes.begin(); itr != classes.end(); itr++)
+    {
+        if (strcmp(itr->c_str(), value) == 0)
+        {
+            update = true;
+            classes.erase(itr);
+            break;
+        }
+    }
+
+    if (!update)
+    {
+        return;
+    }
+
+    SciterUI::stdstr newClass;
+    for (size_t i = 0, n = classes.size(); i < n; i++)
+    {
+        if (newClass.length() > 0)
+        {
+            newClass += " ";
+        }
+        newClass += classes[i].c_str();
+    }
+    SetAttribute("class", newClass.c_str());
+}
+
 void SciterElement::Clear()
 {
     SCDOM_RESULT r = SciterSetElementText((HELEMENT)m_he, 0, 0);
@@ -308,6 +359,17 @@ void SciterElement::SetStyleAttribute(const char* Name, const char * Value) cons
     SCDOM_RESULT r = SciterSetStyleAttribute((HELEMENT)m_he, Name, SciterUI::stdstr(Value).ToUTF16().c_str());
     assert(r == SCDOM_OK);
     (void)r;
+}
+
+void SciterElement::SetText(const char * text)
+{
+    assert(text);
+    if (text) 
+    {
+        std::wstring wtext = SciterUI::stdstr(text).ToUTF16();
+        SCDOM_RESULT r = SciterSetElementText((HELEMENT)m_he, wtext.c_str(), UINT(wtext.size()));
+        assert(r == SCDOM_OK); (void)r;
+    }
 }
 
 void SciterElement::SetTimer(uint32_t milliseconds, uint32_t* timer_id) const
