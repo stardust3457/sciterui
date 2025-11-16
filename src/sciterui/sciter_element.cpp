@@ -361,7 +361,7 @@ void SciterElement::SetStyleAttribute(const char* Name, const char * Value) cons
     (void)r;
 }
 
-void SciterElement::SetText(const char * text)
+void SciterElement::SetText(const char * text) const
 {
     assert(text);
     if (text) 
