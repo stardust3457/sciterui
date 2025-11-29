@@ -329,6 +329,10 @@ void WidgetPageNav::AddSink(IPagesSink * sink)
             sink->PageNavCreatedPage(Page->PageName, Page->Content);
         }
     }
+    if (!m_currentPage.empty())
+    {
+        sink->PageNavPageChanged(m_currentPage, m_pageNavElem);
+    }
 }
 
 void WidgetPageNav::RemoveSink(IPagesSink * Sink)
