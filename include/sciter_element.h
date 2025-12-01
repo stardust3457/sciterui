@@ -1,11 +1,15 @@
 #pragma once
 #include "sciter_ui.h"
 #include "sciter_value.h"
+#include <vector>
 
 __interface ISciterElementCallback
 {
     bool OnSciterElement(SCITER_ELEMENT he);
 };
+
+class SciterElement;
+using SciterElements = std::vector<SciterElement>;
 
 class SciterElement
 {
@@ -111,6 +115,7 @@ public:
     void Clear();
     bool Create(const char * tagName, const char * text);
     void Detach() const;
+    SciterElements FindAll(const char * selector, ...) const;
     SciterElement FindFirst(const char * selector, ...) const;
     std::string GetAttribute(const char * name) const;
     void SetAttribute(const char * name, const char * value) const;

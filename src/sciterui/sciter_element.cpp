@@ -6,19 +6,33 @@
 
 #undef HWINDOW
 
-struct FindFirstCallback : sciter::dom::callback
+namespace 
 {
-    HELEMENT hfound;
-    FindFirstCallback() :
-        hfound(0)
+    struct FindAllCallback : sciter::dom::callback
     {
-    }
-    inline bool on_element(HELEMENT hfe)
+        SciterElements elements;
+                
+        bool on_element(HELEMENT hfe)
+        {
+            elements.push_back(hfe);
+            return false;
+        }
+    };
+
+    struct FindFirstCallback : sciter::dom::callback
     {
-        hfound = hfe;
-        return true; /*stop enumeration*/
-    }
-};
+        HELEMENT hfound;
+        FindFirstCallback() :
+            hfound(0)
+        {
+        }
+        inline bool on_element(HELEMENT hfe)
+        {
+            hfound = hfe;
+            return true; /*stop enumeration*/
+        }
+    };
+}
 
 static SBOOL SC_CALLBACK callback_func(HELEMENT he, LPVOID param)
 {
@@ -168,6 +182,19 @@ void SciterElement::Detach() const
     SCDOM_RESULT r = SciterDetachElement((HELEMENT)m_he);
     assert(r == SCDOM_OK);
     (void)r;
+}
+
+SciterElements SciterElement::FindAll(const char * selector, ...) const
+{
+    SciterUI::stdstr buffer;
+    va_list args;
+    va_start(args, selector);
+    buffer.ArgFormat(selector, args);
+    va_end(args);
+
+    FindAllCallback cb;
+    SciterSelectElements((HELEMENT)m_he, buffer.c_str(), callback_func, &cb);
+    return cb.elements;
 }
 
 SciterElement SciterElement::FindFirst(const char * selector, ...) const
