@@ -133,6 +133,7 @@ public:
     void HidePopup() const;
     void Insert(const SCITER_ELEMENT & e, uint32_t Index);
     bool ReleaseCapture(void) const;
+    void PostEvent(uint32_t event_code, uint64_t reason = 0, SCITER_ELEMENT heSource = 0) const;
     void SelectElements(ISciterElementCallback * pcall, const char * selectors) const;
     bool SetCapture(void) const;
     void SetHTML(const uint8_t * hHtml, size_t htmlLength, int where = SIH_REPLACE_CONTENT) const;

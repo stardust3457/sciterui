@@ -341,6 +341,12 @@ bool SciterElement::ReleaseCapture(void) const
     return SciterReleaseCapture((HELEMENT)m_he) == SCDOM_OK;
 }
 
+void SciterElement::PostEvent(uint32_t event_code, uint64_t reason, SCITER_ELEMENT heSource) const
+{
+    SCDOM_RESULT r = SciterPostEvent((HELEMENT)m_he, event_code, heSource ? (HELEMENT)heSource : (HELEMENT)m_he, reason);
+    assert(r == SCDOM_OK); (void)r;
+}
+
 void SciterElement::SelectElements(ISciterElementCallback * pcall, const char * selectors) const
 {
     SciterSelectElements((HELEMENT)m_he, selectors, callback_func, pcall);
