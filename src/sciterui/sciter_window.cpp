@@ -312,6 +312,11 @@ bool SciterWindow::GetEventProc(const char * riid, LPELEMENT_EVENT_PROC & eventP
         eventProc = &EventHandler::StateChangeHandler;
         subscription = HANDLE_BEHAVIOR_EVENT;
     }
+    else if (strcmp(IID_EVENTSINK, riid) == 0)
+    {
+        eventProc = &EventHandler::EventSinkHandler;
+        subscription = HANDLE_BEHAVIOR_EVENT;
+    }
     else
     {
         eventProc = nullptr;

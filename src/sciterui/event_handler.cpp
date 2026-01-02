@@ -296,4 +296,32 @@ int EventHandler::StateChangeHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg
     return false;
 }
 
+int EventHandler::EventSinkHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms)
+{
+    EventHandler* handler = (EventHandler*)tag;
+    if (evtg == SUBSCRIPTIONS_REQUEST && handler != nullptr)
+    {
+        uint32_t* p = (uint32_t*)prms;
+        *p = handler->m_Subscription;
+        return true;
+    }
+    else if (evtg == HANDLE_INITIALIZATION)
+    {
+        return true;
+    }
+    else if (evtg == HANDLE_BEHAVIOR_EVENT)
+    {
+        BEHAVIOR_EVENT_PARAMS* p = (BEHAVIOR_EVENT_PARAMS*)prms;
+        if ((p->cmd & (SINKING | HANDLED)) == 0)
+        {
+            IEventSink * eventSink = handler != nullptr ? (IEventSink*)handler->m_Interface : nullptr;
+            if (eventSink)
+            {
+                return eventSink->OnEvent(p->he, p->heTarget, p->cmd, p->reason);
+            }
+        }
+    }
+    return false;
+}
+
 } // namespace SciterUI

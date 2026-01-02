@@ -172,3 +172,9 @@ __interface ITimerSink
     bool OnTimer(SCITER_ELEMENT Element, uint32_t * TimerId);
 };
 static const char * IID_ITIMERSINK = "9B8F8D75-6C09-40D8-AB24-6C2849A2F07E";
+
+__interface IEventSink
+{
+    bool OnEvent(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t event_code, uint64_t reason);
+};
+static const char * IID_EVENTSINK = "B3F842D6-C07D-49F9-8798-945A3F78F5EB";
