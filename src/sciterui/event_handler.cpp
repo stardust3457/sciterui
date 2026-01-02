@@ -255,8 +255,8 @@ int EventHandler::ForwardBehaviorHandler(void* tag, SCITER_ELEMENT he, uint32_t 
         {
             BEHAVIOR_EVENT_PARAMS params = {};
             params.cmd = p->cmd;
-            params.heTarget = (HELEMENT)handler;
-            params.he = (HELEMENT)handler;
+            params.heTarget = (HELEMENT)handler->m_Interface;
+            params.he = (HELEMENT)handler->m_Interface;
             params.name = p->name;
             params.data = p->data;
             SBOOL handled = false;
