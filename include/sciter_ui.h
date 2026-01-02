@@ -17,6 +17,7 @@ __interface IWindowDestroySink
 
 __interface ISciterWindow
 {
+    void Show() = 0;
     void CenterWindow() = 0;
     void FixMinSize() = 0;
     HWINDOW GetHandle() const = 0;
@@ -41,7 +42,7 @@ __interface IWidget
 };
 
 __interface ISciterUI;
-typedef IWidget *(__stdcall * tyCreateWidget)(ISciterUI & SciterUI);
+typedef IWidget * (__stdcall * tyCreateWidget)(ISciterUI & SciterUI);
 
 enum SCITERUI_WINDOW_CREATE_FLAGS {
     SUIW_CHILD = (1 << 0), // child window only, if this flag is set all other flags ignored
@@ -49,6 +50,7 @@ enum SCITERUI_WINDOW_CREATE_FLAGS {
     SUIW_MAIN = (1 << 7), // main window of the app, will terminate the app on close
     SUIW_POPUP = (1 << 8), // the window is created as topmost window.
     SUIW_ENABLE_DEBUG = (1 << 9), // make this window inspector ready
+    SUIW_HIDDEN = (1 << 10),  // Create window hidden, caller must show it explicitly
 };
 
 __interface ISciterUI

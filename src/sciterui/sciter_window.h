@@ -68,6 +68,7 @@ public:
     SciterWindow(Sciter & sciter);
     ~SciterWindow();
 
+    void Show();
     bool Create(HWINDOW parentWinow, const char * htmlFile, int x, int y, int width, int height, unsigned int flags);
     bool GetDestroyed(void) const;
     void SetDestroyed(void);

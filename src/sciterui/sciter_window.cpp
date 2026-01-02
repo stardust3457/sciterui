@@ -26,9 +26,16 @@ SciterWindow::~SciterWindow()
 {
 }
 
+void SciterWindow::Show()
+{
+    ::SciterWindowExec((HWND)m_hWnd, SCITER_WINDOW_SET_STATE, SCITER_WINDOW_STATE_SHOWN, 0);
+}
+
 bool SciterWindow::Create(HWINDOW parentWinow, const char * htmlFile, int x, int y, int width, int height, unsigned int flags)
 {
     bool childWindow = parentWinow != nullptr && (flags & SUIW_CHILD) != 0;
+    bool startHidden = (flags & SUIW_HIDDEN) != 0;
+
 #ifdef WIN32
     DWORD exStyle = childWindow ? (WS_EX_DLGMODALFRAME | WS_EX_TOOLWINDOW) : WS_EX_APPWINDOW;
     DWORD style = childWindow ? (DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS) : (WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
@@ -54,7 +61,10 @@ bool SciterWindow::Create(HWINDOW parentWinow, const char * htmlFile, int x, int
         m_sciter.WindowCreated(this);
         LoadHtml(htmlFile);
         SetDefaultWindowSize(x, y, width, height);
-        ::SciterWindowExec((HWND)m_hWnd, SCITER_WINDOW_SET_STATE, SCITER_WINDOW_STATE_SHOWN, 0);
+        if (!startHidden)
+        {
+            ::SciterWindowExec((HWND)m_hWnd, SCITER_WINDOW_SET_STATE, SCITER_WINDOW_STATE_SHOWN, 0);
+        }
     }
     return m_hWnd != nullptr;
 }
@@ -177,6 +187,8 @@ void SciterWindow::SetDestroyed(void)
     if (m_hParent != nullptr)
     {
         EnableWindow((HWND)m_hParent, TRUE);
+        SetForegroundWindow((HWND)m_hParent);
+        SetFocus((HWND)m_hParent);
     }
     for (EventSinks::iterator itr = m_eventSinks.begin(); itr != m_eventSinks.end(); itr++)
     {
@@ -338,6 +350,10 @@ LRESULT SciterWindow::OnLoadData(LPSCN_LOAD_DATA pnmld)
     if (pnmld == nullptr)
     {
         return LOAD_DISCARD;
+    }
+    if (wcsncmp(pnmld->uri, L"data:", 5) == 0)
+    {
+        return LOAD_OK;
     }
 
     ResourceManager & manager = m_sciter.GetResourceManager();
