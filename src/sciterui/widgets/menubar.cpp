@@ -14,7 +14,7 @@ class WidgetMenuBar :
     public IClickSink,
     public ISciterElementCallback
 {
-    typedef std::map<WidgetMenuBar *, std::shared_ptr<WidgetMenuBar>> MenuBars;
+    typedef std::map<IWidget *, std::shared_ptr<WidgetMenuBar>> MenuBars;
     typedef std::set<IMenuBarSink *> IMenuBarSinkSet;
 
 public:
@@ -43,8 +43,9 @@ private:
     // IClickSink
     bool OnClick(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t reason);
 
-    static std::string MenuItemHtml(const MenuBarItem& item, uint32_t indent);
-    static IWidget* __stdcall CreateWidget(ISciterUI& sciterUI);
+    static std::string MenuItemHtml(const MenuBarItem & item, uint32_t indent);
+    static IWidget * __stdcall CreateWidget(ISciterUI & sciterUI);
+    static void __stdcall ReleaseWidget(IWidget * widget);
 
     static MenuBars m_instances;
 
@@ -91,7 +92,7 @@ void WidgetMenuBar::Register(ISciterUI & sciterUI)
         "    display: block;"
         "    behavior: MainMenu;"
         "}";
-    sciterUI.RegisterWidgetType("MainMenu", WidgetMenuBar::CreateWidget, WidgetCss);
+    sciterUI.RegisterWidgetType("MainMenu", WidgetMenuBar::CreateWidget, WidgetMenuBar::ReleaseWidget, WidgetCss);
 }
 
 void WidgetMenuBar::SetMenuContent(MenuBarItemList & items) const
@@ -213,9 +214,17 @@ IWidget * WidgetMenuBar::CreateWidget(ISciterUI & sciterUI)
 {
     std::shared_ptr<WidgetMenuBar> instance(new WidgetMenuBar(sciterUI));
     IWidget * widget = (IWidget *)instance.get();
-    WidgetMenuBar * menubar = instance.get();
-    m_instances.insert(MenuBars::value_type(menubar, std::move(instance)));
+    m_instances.insert(MenuBars::value_type(widget, std::move(instance)));
     return widget;
+}
+
+void WidgetMenuBar::ReleaseWidget(IWidget * widget)
+{
+    MenuBars::iterator it = m_instances.find(widget);
+    if (it != m_instances.end())
+    {
+        m_instances.erase(it);
+    }
 }
 
 WidgetMenuBar::WidgetMenuBar(ISciterUI & sciterUI) :

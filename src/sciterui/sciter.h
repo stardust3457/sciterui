@@ -28,11 +28,13 @@ class Sciter :
         WidgetCallbackInfo()
         {
             sciter = nullptr;
-            callback = nullptr;
+            createWidget = nullptr;
+            releaseWidget = nullptr;
         }
         IWidgetMap widgets;
         Sciter * sciter;
-        tyCreateWidget callback;
+        tyCreateWidget createWidget;
+        tyReleaseWidget releaseWidget;
     };
 
     typedef std::vector<std::unique_ptr<SciterWindow>> WindowList;
@@ -73,7 +75,7 @@ public:
     void PopupShow(SCITER_ELEMENT hePopup, SCITER_ELEMENT heAnchor, uint32_t placement) override;
     void PopupShowAt(SCITER_ELEMENT hePopup, SCITER_POINT pos, uint32_t placement) override;
     void PopupHide(SCITER_ELEMENT he) override;
-    bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss) override;
+    bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, tyReleaseWidget releaseWidget, const char * widgetCss) override;
     void UpdateWindow(HWINDOW hwnd) override;
     void Run() override;
     void Stop() override;

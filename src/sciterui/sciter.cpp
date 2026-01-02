@@ -160,7 +160,7 @@ void Sciter::PopupHide(SCITER_ELEMENT he)
     SciterHidePopup((HELEMENT)he);
 }
 
-bool Sciter::RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss)
+bool Sciter::RegisterWidgetType(const char * name, tyCreateWidget createWidget, tyReleaseWidget releaseWidget, const char * widgetCss)
 {
     if (name == nullptr || createWidget == nullptr)
     {
@@ -173,7 +173,8 @@ bool Sciter::RegisterWidgetType(const char * name, tyCreateWidget createWidget, 
     }
     WidgetCallbackInfo widgetCallbackInfo;
     widgetCallbackInfo.sciter = this;
-    widgetCallbackInfo.callback = createWidget;
+    widgetCallbackInfo.createWidget = createWidget;
+    widgetCallbackInfo.releaseWidget = releaseWidget;
     m_widgetFactory.insert(WidgetMap::value_type(name, widgetCallbackInfo));
     if (widgetCss != nullptr && strlen(widgetCss) > 0)
     {
@@ -196,7 +197,7 @@ uint32_t Sciter::AttachWidget(LPSCN_ATTACH_BEHAVIOR lpab)
     {
         return 0;
     }
-    IWidget * pWidget = (itr->second.callback)(*this);
+    IWidget * pWidget = (itr->second.createWidget)(*this);
     if (pWidget == nullptr)
     {
         return 0;
@@ -340,6 +341,11 @@ int Sciter::AttachWidgetProc(WidgetCallbackInfo * info, SCITER_ELEMENT he, uint3
                     IWidget * widget = IWidgetIter->second;
                     widget->Detached(he);
                     elementBase->RemoveWidget(widget);
+                    
+                    if (info->releaseWidget != nullptr)
+                    {
+                        info->releaseWidget(widget);
+                    }
                 }
                 m_elementBases.erase(itr);
             }

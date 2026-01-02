@@ -82,6 +82,7 @@ private:
     void RemoveSink(IPagesSink * sink) override;
 
     static IWidget * __stdcall CreateWidget(ISciterUI & sciterUI);
+    static void __stdcall ReleaseWidget(IWidget * widget);
 
     static PageNavs m_instances;
 
@@ -117,7 +118,7 @@ bool WidgetPageNav::Register(ISciterUI & sciterUI)
         "   display: block;"
         "}";
 
-    return sciterUI.RegisterWidgetType("PageNav", WidgetPageNav::CreateWidget, WidgetCss);
+    return sciterUI.RegisterWidgetType("PageNav", WidgetPageNav::CreateWidget, WidgetPageNav::ReleaseWidget, WidgetCss);
 }
 
 void WidgetPageNav::Attached(SCITER_ELEMENT element, IBaseElement * baseElement)
@@ -362,6 +363,15 @@ IWidget * __stdcall WidgetPageNav::CreateWidget(ISciterUI & sciterUI)
     WidgetPageNav * pagenav = instance.get();
     m_instances.insert(PageNavs::value_type(pagenav, std::move(instance)));
     return widget;
+}
+
+void __stdcall WidgetPageNav::ReleaseWidget(IWidget* widget)
+{
+    PageNavs::iterator it = m_instances.find(widget);
+    if (it != m_instances.end())
+    {
+        m_instances.erase(it);
+    }
 }
 
 }

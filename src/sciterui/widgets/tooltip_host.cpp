@@ -14,7 +14,7 @@ class WidgetToolTipHost :
     public ITimerSink,
     public IWidget
 {
-    typedef std::map<WidgetToolTipHost*, std::shared_ptr<WidgetToolTipHost>> ToolTips;
+    typedef std::map<IWidget *, std::shared_ptr<WidgetToolTipHost>> ToolTips;
     
     enum
     {
@@ -49,7 +49,8 @@ private:
     void Detached(SCITER_ELEMENT element) override;
     std::shared_ptr<void> GetInterface(const char* riid) override;
 
-    static IWidget* __stdcall CreateWidget(ISciterUI & SciterUI);
+    static IWidget * __stdcall CreateWidget(ISciterUI & SciterUI);
+    static void __stdcall ReleaseWidget(IWidget * widget);
 
     static ToolTips m_instances;
 
@@ -224,7 +225,7 @@ bool WidgetToolTipHost::Register(ISciterUI & SciterUI)
         "[tooltip-host] {"
         "    behavior: tooltip-host;"
         "}";
-    return SciterUI.RegisterWidgetType("tooltip-host", WidgetToolTipHost::CreateWidget, WidgetCss);
+    return SciterUI.RegisterWidgetType("tooltip-host", WidgetToolTipHost::CreateWidget, WidgetToolTipHost::ReleaseWidget, WidgetCss);
 }
 
 IWidget * __stdcall WidgetToolTipHost::CreateWidget(ISciterUI & sciterUI)
@@ -234,6 +235,15 @@ IWidget * __stdcall WidgetToolTipHost::CreateWidget(ISciterUI & sciterUI)
     WidgetToolTipHost * tooltip = instance.get();
     m_instances.insert(ToolTips::value_type(tooltip, std::move(instance)));
     return widget;
+}
+
+void __stdcall WidgetToolTipHost::ReleaseWidget(IWidget * widget)
+{
+    ToolTips::iterator it = m_instances.find(widget);
+    if (it != m_instances.end())
+    {
+        m_instances.erase(it);
+    }
 }
 
 }

@@ -43,6 +43,7 @@ __interface IWidget
 
 __interface ISciterUI;
 typedef IWidget * (__stdcall * tyCreateWidget)(ISciterUI & SciterUI);
+typedef void(__stdcall * tyReleaseWidget)(IWidget * widget);
 
 enum SCITERUI_WINDOW_CREATE_FLAGS {
     SUIW_CHILD = (1 << 0), // child window only, if this flag is set all other flags ignored
@@ -63,7 +64,7 @@ __interface ISciterUI
     void PopupShow(SCITER_ELEMENT hePopup, SCITER_ELEMENT heAnchor, uint32_t placement) = 0;
     void PopupShowAt(SCITER_ELEMENT hePopup, SCITER_POINT pos, uint32_t placement) = 0;
     void PopupHide(SCITER_ELEMENT he) = 0;
-    bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, const char * widgetCss) = 0;
+    bool RegisterWidgetType(const char * name, tyCreateWidget createWidget, tyReleaseWidget releaseWidget,  const char * widgetCss) = 0;
     void UpdateWindow(HWINDOW hwnd) = 0;
     void Run() = 0;
     void Stop() = 0;

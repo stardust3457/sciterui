@@ -12,7 +12,7 @@ namespace SciterUI
         public IWidget,
         public IComboBox
     {
-        typedef std::map<WidgetComboBox*, std::shared_ptr<WidgetComboBox>> ComboBoxes;
+        typedef std::map<IWidget *, std::shared_ptr<WidgetComboBox>> ComboBoxes;
         typedef std::vector<std::string> Items;
 
     public:
@@ -39,6 +39,7 @@ namespace SciterUI
         bool SelectItem(int32_t index) override;
 
         static IWidget * __stdcall CreateWidget(ISciterUI & SciterUI);
+        static void __stdcall ReleaseWidget(IWidget * widget);
 
         static ComboBoxes m_instances;
 
@@ -52,7 +53,8 @@ namespace SciterUI
     WidgetComboBox::ComboBoxes WidgetComboBox::m_instances;
 
     WidgetComboBox::WidgetComboBox(ISciterUI& sciterUI) :
-        m_sciterUI(sciterUI)
+        m_sciterUI(sciterUI),
+        m_baseElement(nullptr)
     {
     }
 
@@ -65,7 +67,7 @@ namespace SciterUI
             "    behavior: ComboBox;"
             "}";
 
-        return SciterUI.RegisterWidgetType("ComboBox", WidgetComboBox::CreateWidget, WidgetCss);
+        return SciterUI.RegisterWidgetType("ComboBox", WidgetComboBox::CreateWidget, WidgetComboBox::ReleaseWidget, WidgetCss);
     }
 
     void WidgetComboBox::Attached(SCITER_ELEMENT element, IBaseElement* baseElement)
@@ -80,6 +82,7 @@ namespace SciterUI
 
     void WidgetComboBox::Detached(SCITER_ELEMENT /*Element*/)
     {
+        m_sciterUI.DetachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void*)((SCITER_ELEMENT)m_select));
         m_baseElement = nullptr;
         m_comboBoxElem = nullptr;
     }
@@ -222,13 +225,22 @@ namespace SciterUI
         return true;
     }
 
-    IWidget* __stdcall WidgetComboBox::CreateWidget(ISciterUI& sciterUI)
+    IWidget * __stdcall WidgetComboBox::CreateWidget(ISciterUI & sciterUI)
     {
         std::shared_ptr<WidgetComboBox> instance(new WidgetComboBox(sciterUI));
         IWidget * widget = (IWidget*)instance.get();
         WidgetComboBox * combobox = instance.get();
         m_instances.insert(ComboBoxes::value_type(combobox, std::move(instance)));
         return widget;
+    }
+
+    void WidgetComboBox::ReleaseWidget(IWidget * widget)
+    {
+        ComboBoxes::iterator it = m_instances.find(widget);
+        if (it != m_instances.end())
+        {
+            m_instances.erase(it);
+        }
     }
 }
 
