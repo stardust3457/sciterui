@@ -24,45 +24,45 @@ class WidgetPageNav :
         }
     };
 
-    struct CPage
+    struct DisplayPage
     {
     public:
-        CPage(SCITER_ELEMENT Elem_) :
-            Elem(Elem_),
-            PageExternal(false)
+        DisplayPage(SCITER_ELEMENT elem_) :
+            elem(elem_),
+            pageExternal(false)
         {
         }
 
-        SciterElement Elem;
-        SciterElement Content;
-        std::string PageName;
-        std::string PageContents;
-        std::string PageLabel;
-        bool PageExternal;
+        SciterElement elem;
+        SciterElement content;
+        std::string pageName;
+        std::string pageContents;
+        std::string pageLabel;
+        bool pageExternal;
 
     private:
-        CPage() = delete;
-        CPage(const CPage &) = delete;
-        CPage& operator=(const CPage &) = delete;
+        DisplayPage() = delete;
+        DisplayPage(const DisplayPage &) = delete;
+        DisplayPage& operator=(const DisplayPage &) = delete;
     };
-    typedef std::map<std::string, std::unique_ptr<CPage>, InsensitiveCompare> NavPages;
-    typedef std::map<SCITER_ELEMENT, CPage *> ElemPageMap;
-    typedef std::map<WidgetPageNav *, std::shared_ptr<WidgetPageNav>> PageNavs;
+    typedef std::map<std::string, std::unique_ptr<DisplayPage>, InsensitiveCompare> NavPages;
+    typedef std::map<SCITER_ELEMENT, DisplayPage *> ElemPageMap;
+    typedef std::map<IWidget *, std::shared_ptr<WidgetPageNav>> PageNavs;
     typedef std::set<IPagesSink *> IPagesSinkSet;
 
 public:
-    static bool Register(ISciterUI & SciterUI);
+    static bool Register(ISciterUI & sciterUI);
 
 private:
     WidgetPageNav() = delete;
     WidgetPageNav(const WidgetPageNav &) = delete;
     WidgetPageNav& operator=(const WidgetPageNav &) = delete;
 
-    WidgetPageNav(ISciterUI & SciterUI);
-    void HideCurrentPage(CPage * page);
-    bool ShouldChangePage(CPage * newPage, CPage * currentPage);
-    void TryToShowPage(SCITER_ELEMENT Element);
-    void ShowPage(CPage * newPage);
+    WidgetPageNav(ISciterUI & sciterUI);
+    void HideCurrentPage(DisplayPage * page);
+    bool ShouldChangePage(DisplayPage * newPage, DisplayPage * currentPage);
+    void TryToShowPage(SCITER_ELEMENT element);
+    void ShowPage(DisplayPage * page);
 
     //IWidget
     void Attached(SCITER_ELEMENT element, IBaseElement * baseElement) override;
@@ -73,14 +73,15 @@ private:
     bool OnSciterElement(SCITER_ELEMENT he) override;
 
     // IClickSink
-    bool OnClick(SCITER_ELEMENT Element, SCITER_ELEMENT SourceElem, uint32_t EventReason) override;
+    bool OnClick(SCITER_ELEMENT element, SCITER_ELEMENT sourceElem, uint32_t eventReason) override;
 
     // IPageNav
     std::string GetCurrentPage() override;
+    bool SetCurrentPage(const char * pageName);
     void AddSink(IPagesSink * sink) override;
     void RemoveSink(IPagesSink * sink) override;
 
-    static IWidget* __stdcall CreateWidget(ISciterUI& SciterUI);
+    static IWidget * __stdcall CreateWidget(ISciterUI & sciterUI);
 
     static PageNavs m_instances;
 
@@ -98,11 +99,12 @@ private:
 WidgetPageNav::PageNavs WidgetPageNav::m_instances;
 
 WidgetPageNav::WidgetPageNav(ISciterUI & sciterUI) :
-    m_sciterUI(sciterUI)
+    m_sciterUI(sciterUI),
+    m_baseElement(nullptr)
 {
 }
 
-bool WidgetPageNav::Register(ISciterUI & SciterUI)
+bool WidgetPageNav::Register(ISciterUI & sciterUI)
 {
     const char * WidgetCss =
         "PageNav {"
@@ -115,7 +117,7 @@ bool WidgetPageNav::Register(ISciterUI & SciterUI)
         "   display: block;"
         "}";
 
-    return SciterUI.RegisterWidgetType("PageNav", WidgetPageNav::CreateWidget, WidgetCss);
+    return sciterUI.RegisterWidgetType("PageNav", WidgetPageNav::CreateWidget, WidgetCss);
 }
 
 void WidgetPageNav::Attached(SCITER_ELEMENT element, IBaseElement * baseElement)
@@ -127,16 +129,13 @@ void WidgetPageNav::Attached(SCITER_ELEMENT element, IBaseElement * baseElement)
     {
         m_pageNavElem.SelectElements((ISciterElementCallback *)this, "Page");
         m_targetFrame = SciterElement(ElementRoot.GetElementByID(m_pageNavElem.GetAttributeByName("target").c_str()));
-        if (m_targetFrame.IsValid())
+        if (m_targetFrame.IsValid() && m_firstPage.length() != 0)
         {
-            if (m_firstPage.length() != 0)
+            NavPages::iterator iter = m_pages.find(m_firstPage);
+            if (iter != m_pages.end())
             {
-                NavPages::iterator iter = m_pages.find(m_firstPage);
-                if (iter != m_pages.end())
-                {
-                    CPage & Page = *iter->second;
-                    TryToShowPage(Page.Elem);
-                }
+                DisplayPage & Page = *iter->second;
+                TryToShowPage(Page.elem);
             }
         }
     }
@@ -147,8 +146,8 @@ void WidgetPageNav::Detached(SCITER_ELEMENT /*Element*/)
     NavPages::const_iterator CurrentPageItr = m_pages.find(m_currentPage);
     if (CurrentPageItr != m_pages.end())
     {
-        CPage * Page = CurrentPageItr->second.get();
-        Page->Content = nullptr;
+        DisplayPage * page = CurrentPageItr->second.get();
+        page->content = nullptr;
     }
     m_baseElement = nullptr;
     m_elemPages.clear();
@@ -164,7 +163,7 @@ std::shared_ptr<void> WidgetPageNav::GetInterface(const char * riid)
     return nullptr;
 }
 
-bool WidgetPageNav::ShouldChangePage(CPage * newPage, CPage * currentPage)
+bool WidgetPageNav::ShouldChangePage(DisplayPage * newPage, DisplayPage * currentPage)
 {
     if (newPage == nullptr || currentPage == newPage)
     {
@@ -175,7 +174,7 @@ bool WidgetPageNav::ShouldChangePage(CPage * newPage, CPage * currentPage)
     {
         for (IPagesSinkSet::iterator itr = m_sinks.begin(); itr != m_sinks.end(); itr++)
         {
-            if (!(*itr)->PageNavChangeFrom(currentPage->PageName, m_pageNavElem))
+            if (!(*itr)->PageNavChangeFrom(currentPage->pageName, m_pageNavElem))
             {
                 return false;
             }
@@ -183,7 +182,7 @@ bool WidgetPageNav::ShouldChangePage(CPage * newPage, CPage * currentPage)
     }
     for (IPagesSinkSet::iterator itr = m_sinks.begin(); itr != m_sinks.end(); itr++)
     {
-        if (!(*itr)->PageNavChangeTo(newPage->PageName, m_pageNavElem))
+        if (!(*itr)->PageNavChangeTo(newPage->pageName, m_pageNavElem))
         {
             return false;
         }
@@ -191,18 +190,18 @@ bool WidgetPageNav::ShouldChangePage(CPage * newPage, CPage * currentPage)
     return true;
 }
 
-void WidgetPageNav::HideCurrentPage(CPage * page)
+void WidgetPageNav::HideCurrentPage(DisplayPage * page)
 {
     if (page == nullptr)
     {
         return;
     }
-    if (page->Content.IsValid())
+    if (page->content.IsValid())
     {
-        page->Content.Detach();
+        page->content.Detach();
     }
     m_currentPage.clear();
-    page->Elem.SetState(0, SciterElement::STATE_CURRENT | SciterElement::STATE_VISITED, true);
+    page->elem.SetState(0, SciterElement::STATE_CURRENT | SciterElement::STATE_VISITED, true);
 }
 
 void WidgetPageNav::TryToShowPage(SCITER_ELEMENT element)
@@ -217,8 +216,8 @@ void WidgetPageNav::TryToShowPage(SCITER_ELEMENT element)
     {
         return;
     }
-    CPage * currentPage = nullptr;
-    CPage * newPage = iter->second;
+    DisplayPage * currentPage = nullptr;
+    DisplayPage * newPage = iter->second;
     if (m_currentPage.length() > 0)
     {
         NavPages::const_iterator CurrentPageItr = m_pages.find(m_currentPage);
@@ -236,72 +235,72 @@ void WidgetPageNav::TryToShowPage(SCITER_ELEMENT element)
     ShowPage(newPage);
 }
 
-void WidgetPageNav::ShowPage(CPage * page)
+void WidgetPageNav::ShowPage(DisplayPage * page)
 {
-    if (page->Content.IsValid())
+    if (page->content.IsValid())
     {
-        m_targetFrame.Insert(page->Content, m_targetFrame.GetChildCount());
-        page->Content.SetStyleAttribute("display", "block");
+        m_targetFrame.Insert(page->content, m_targetFrame.GetChildCount());
+        page->content.SetStyleAttribute("display", "block");
     }
     else
     {
-        SciterElement& Content = page->Content;
-        Content.Create("div", "");
-        m_targetFrame.Insert(Content, m_targetFrame.GetChildCount());
-        Content.SetStyleAttribute("width", "100%%");
-        Content.SetStyleAttribute("height", "100%%");
-        if (page->PageExternal)
+        SciterElement & content = page->content;
+        content.Create("div", "");
+        m_targetFrame.Insert(content, m_targetFrame.GetChildCount());
+        content.SetStyleAttribute("width", "100%%");
+        content.SetStyleAttribute("height", "100%%");
+        if (page->pageExternal)
         {
-            m_sciterUI.SetElementHtmlFromResource(page->Content, page->PageContents.c_str());
+            m_sciterUI.SetElementHtmlFromResource(page->content, page->pageContents.c_str());
         }
         else
         {
-            Content.SetHTML((const uint8_t*)page->PageContents.c_str(), page->PageContents.length(), SciterElement::SIH_REPLACE_CONTENT);
+            content.SetHTML((const uint8_t*)page->pageContents.c_str(), page->pageContents.length(), SciterElement::SIH_REPLACE_CONTENT);
         }
         m_sciterUI.UpdateWindow(m_pageNavElem.GetElementHwnd(true));
         for (IPagesSinkSet::iterator itr = m_sinks.begin(); itr != m_sinks.end(); itr++)
         {
-            (*itr)->PageNavCreatedPage(page->PageName, page->Content);
+            (*itr)->PageNavCreatedPage(page->pageName, page->content);
         }
     }
-    m_currentPage = page->PageName;
-    page->Elem.SetState(SciterElement::STATE_CURRENT | SciterElement::STATE_VISITED, 0, true);
+    m_currentPage = page->pageName;
+    page->elem.SetState(SciterElement::STATE_CURRENT | SciterElement::STATE_VISITED, 0, true);
     for (IPagesSinkSet::iterator itr = m_sinks.begin(); itr != m_sinks.end(); itr++)
     {
-        (*itr)->PageNavPageChanged(page->PageName, m_pageNavElem);
+        (*itr)->PageNavPageChanged(page->pageName, m_pageNavElem);
     }
 }
 
 bool WidgetPageNav::OnSciterElement(SCITER_ELEMENT element)
 {
-    std::unique_ptr<CPage> Page(new CPage(element));
-    if (Page.get() == nullptr || !Page->Elem.IsValid())
+    std::unique_ptr<DisplayPage> Page(new DisplayPage(element));
+    if (Page.get() == nullptr || !Page->elem.IsValid())
     {
         return false;
     }
-    Page->PageName = Page->Elem.GetAttributeByName("name");
-    if (Page->PageName.length() == 0)
+    Page->pageName = Page->elem.GetAttributeByName("name");
+    if (Page->pageName.length() == 0)
     {
-        Page->PageName = stdstr_f("Page_%d", m_pages.size() + 1);
+        Page->pageName = stdstr_f("Page_%d", m_pages.size() + 1);
     }
-    Page->PageLabel = Page->Elem.GetAttributeByName("label");
-    Page->PageContents = Page->Elem.GetAttributeByName("contents");
-    Page->PageExternal = true;
-    if (Page->PageContents.length() == 0)
+    Page->pageLabel = Page->elem.GetAttributeByName("label");
+    Page->pageContents = Page->elem.GetAttributeByName("contents");
+    Page->pageExternal = true;
+    if (Page->pageContents.length() == 0)
     {
-        Page->PageExternal = false;
-        Page->PageContents = Page->Elem.GetHTML(false);
+        Page->pageExternal = false;
+        Page->pageContents = Page->elem.GetHTML(false);
     }
-    Page->Elem.SetHTML((const uint8_t *)Page->PageLabel.c_str(), (int)Page->PageLabel.length(), SciterElement::SIH_REPLACE_CONTENT);
-    Page->Elem.SetAttribute("data-page_id", stdstr_f("%llx", (SCITER_ELEMENT)Page->Elem).c_str());
-    m_sciterUI.AttachHandler(Page->Elem, IID_ICLICKSINK, (IClickSink *)this);
-    std::pair<NavPages::iterator, bool> Item = m_pages.insert(NavPages::value_type(Page->PageName, std::move(Page)));
+    Page->elem.SetHTML((const uint8_t *)Page->pageLabel.c_str(), (int)Page->pageLabel.length(), SciterElement::SIH_REPLACE_CONTENT);
+    Page->elem.SetAttribute("data-page_id", stdstr_f("%llx", (SCITER_ELEMENT)Page->elem).c_str());
+    m_sciterUI.AttachHandler(Page->elem, IID_ICLICKSINK, (IClickSink *)this);
+    std::pair<NavPages::iterator, bool> Item = m_pages.insert(NavPages::value_type(Page->pageName, std::move(Page)));
     if (Item.second)
     {
         m_elemPages.insert(ElemPageMap::value_type(element, Item.first->second.get()));
         if (m_firstPage.empty())
         {
-            m_firstPage = Item.first->second->PageName;
+            m_firstPage = Item.first->second->pageName;
         }
     }
     return false;
@@ -318,15 +317,27 @@ std::string WidgetPageNav::GetCurrentPage()
     return m_currentPage;
 }
 
+bool WidgetPageNav::SetCurrentPage(const char * pageName)
+{
+    NavPages::const_iterator iter = m_pages.find(pageName);
+    if (iter == m_pages.end())
+    {
+        return false;
+    }
+    DisplayPage & Page = *iter->second;
+    TryToShowPage(Page.elem);
+    return true;
+}
+
 void WidgetPageNav::AddSink(IPagesSink * sink)
 {
     m_sinks.insert(sink);
     for (NavPages::const_iterator itr = m_pages.begin(); itr != m_pages.end(); itr++)
     {
-        const CPage * Page = itr->second.get();
-        if (Page->Content.IsValid())
+        const DisplayPage * page = itr->second.get();
+        if (page->content.IsValid())
         {
-            sink->PageNavCreatedPage(Page->PageName, Page->Content);
+            sink->PageNavCreatedPage(page->pageName, page->content);
         }
     }
     if (!m_currentPage.empty())
