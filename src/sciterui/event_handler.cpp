@@ -101,6 +101,31 @@ int EventHandler::ClickHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, voi
     return false;
 }
 
+int EventHandler::DoubleClickHandler(void* tag, SCITER_ELEMENT he, uint32_t evtg, void* prms)
+{
+    EventHandler * handler = (EventHandler*)tag;
+    IDoubleClickSink * clickSink = handler != nullptr ? (IDoubleClickSink*)handler->m_Interface : nullptr;
+    if (evtg == SUBSCRIPTIONS_REQUEST && handler != nullptr)
+    {
+        uint32_t* p = (uint32_t*)prms;
+        *p = handler->m_Subscription;
+        return true;
+    }
+    else if (evtg == HANDLE_INITIALIZATION)
+    {
+        return true;
+    }
+    if (evtg == HANDLE_MOUSE && clickSink)
+    {
+        MOUSE_PARAMS* p = (MOUSE_PARAMS*)prms;
+        if (p->cmd == MOUSE_DCLICK)
+        {
+            return clickSink->OnDoubleClick(he, p->target);
+        }
+    }
+    return false;
+}
+
 int EventHandler::TimerHandler(void * tag, SCITER_ELEMENT he, uint32_t evtg, void * prms)
 {
     EventHandler * handler = (EventHandler*)tag;

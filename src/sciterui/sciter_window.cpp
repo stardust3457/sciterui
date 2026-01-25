@@ -277,6 +277,11 @@ bool SciterWindow::GetEventProc(const char * riid, LPELEMENT_EVENT_PROC & eventP
         eventProc = &EventHandler::ClickHandler;
         subscription = HANDLE_MOUSE | HANDLE_BEHAVIOR_EVENT;
     }
+    else if (strcmp(IID_IDBLCLICKSINK, riid) == 0)
+    {
+        eventProc = &EventHandler::DoubleClickHandler;
+        subscription = HANDLE_MOUSE;
+    }
     else if (strcmp(IID_ITIMERSINK, riid) == 0)
     {
         eventProc = &EventHandler::TimerHandler;

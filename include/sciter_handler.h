@@ -8,6 +8,12 @@ __interface IClickSink
 };
 static const char * IID_ICLICKSINK = "591A7458-0F80-4A52-A68E-89B1E4F16FB3";
 
+__interface IDoubleClickSink
+{
+    bool OnDoubleClick(SCITER_ELEMENT element, SCITER_ELEMENT source) = 0;
+};
+static const char * IID_IDBLCLICKSINK = "D0D54987-9FF2-4D2A-83FB-77F996433351";
+
 __interface IMouseUpDownSink
 {
     bool OnMouseUp(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t x, uint32_t y) = 0;
