@@ -419,6 +419,14 @@ void SciterElement::SetValue(SciterValue value) const
     assert(r == SCDOM_OK); (void)r;
 }
 
+/**Apply changes and refresh element area in its window.
+  * \param[in] render_now \b bool, if true element will be redrawn immediately.
+  **/
+void SciterElement::Update(bool renderNow) const
+{
+    SciterUpdateElement((HELEMENT)m_he, (SBOOL)renderNow);
+}
+
 SciterValue SciterElement::Eval(const char * script)
 {
     std::wstring wScript(SciterUI::stdstr(script).ToUTF16());

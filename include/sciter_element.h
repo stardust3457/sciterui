@@ -143,6 +143,7 @@ public:
     void SetText(const char * text) const;
     void SetTimer(uint32_t milliseconds, uint32_t * timer_id) const;
     void SetValue(SciterValue value) const;
+    void Update(bool renderNow = false) const;
     SciterValue Eval(const char * script);
 
 private:
