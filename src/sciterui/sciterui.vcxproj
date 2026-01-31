@@ -43,6 +43,7 @@
     <ClCompile Include="sciter_window.cpp" />
     <ClCompile Include="std_string.cpp" />
     <ClCompile Include="widgets\combo_box.cpp" />
+    <ClCompile Include="widgets\list_box.cpp" />
     <ClCompile Include="widgets\menubar.cpp" />
     <ClCompile Include="widgets\page_nav.cpp" />
     <ClCompile Include="widgets\tooltip_host.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="..\..\include\sciter_ui.h" />
     <ClInclude Include="..\..\include\sciter_value.h" />
     <ClInclude Include="..\..\include\widgets\combo_box.h" />
+    <ClInclude Include="..\..\include\widgets\list_box.h" />
     <ClInclude Include="..\..\include\widgets\menubar.h" />
     <ClInclude Include="..\..\include\widgets\page_nav.h" />
     <ClInclude Include="..\..\include\widgets\tooltip_host.h" />
