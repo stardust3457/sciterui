@@ -115,6 +115,7 @@ public:
     void Clear();
     bool Create(const char * tagName, const char * text);
     void Detach() const;
+    void Destroy();
     SciterElements FindAll(const char * selector, ...) const;
     SciterElement FindFirst(const char * selector, ...) const;
     std::string GetAttribute(const char * name) const;

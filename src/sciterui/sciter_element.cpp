@@ -184,6 +184,15 @@ void SciterElement::Detach() const
     (void)r;
 }
 
+void SciterElement::Destroy()
+{
+    HELEMENT t = (HELEMENT)m_he; 
+    m_he = 0;
+    SCDOM_RESULT r = SciterDeleteElement(t);
+    assert(r == SCDOM_OK); 
+    (void)r;
+}
+
 SciterElements SciterElement::FindAll(const char * selector, ...) const
 {
     SciterUI::stdstr buffer;
