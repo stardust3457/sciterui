@@ -95,6 +95,8 @@ BOOL CSciterMfcApp::InitInstance()
     ALLOW_EVAL |
     ALLOW_SYSINFO);
 
+	SciterExec(SCITER_APP_INIT, 0,0 );
+
 	// To create the main window, this code creates a new frame window
 	// object and then sets it as the application's main window object
 	CMainFrame* pFrame = new CMainFrame;
@@ -121,8 +123,15 @@ BOOL CSciterMfcApp::InitInstance()
 
 int CSciterMfcApp::ExitInstance()
 {
+	SciterExec(SCITER_APP_SHUTDOWN, 0, 0);
 	//TODO: handle additional resources you may have added
 	return CWinApp::ExitInstance();
+}
+
+
+BOOL CSciterMfcApp::OnIdle(LONG lCount) {
+	SciterExec(SCITER_APP_LOOP_HEARTBIT, 0, 0);
+	return __super::OnIdle(lCount);
 }
 
 // CSciterMfcApp message handlers

@@ -66,9 +66,10 @@
    input|hslider { display:block; width:*; min-width:6ch; }
    input|checkbox { height:1.6em; }
    select { display:block; width:*; min-width: 6ch; background:var(widget-back); }
-   label { display:block; 
+   label { 
+      display:block; 
       white-space:nowrap; 
-      vertical-align:middle; 
+      content-vertical-align:middle;
       text-align:end; 
       overflow-x:hidden;
       text-overflow:ellipsis;

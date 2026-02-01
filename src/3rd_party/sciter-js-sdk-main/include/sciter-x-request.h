@@ -47,7 +47,7 @@ typedef enum SciterResourceType
   RT_DATA_SCRIPT = 4,
   RT_DATA_RAW = 5,
   RT_DATA_FONT,
-  RT_DATA_SOUND,    // wav bytes
+  RT_DATA_MEDIA,    // video, audio, lottie, etc.
   RT_DATA_FORCE_DWORD = 0xffffffff
 } SciterResourceType;
 
@@ -59,6 +59,8 @@ typedef enum REQUEST_STATE
 
     RS_FORCE_DWORD = 0xffffffff
   } REQUEST_STATE;
+
+typedef struct _HELEMENT* HELEMENT;
 
 struct SciterRequestAPI
 {
@@ -143,11 +145,11 @@ struct SciterRequestAPI
   REQUEST_RESULT
         SCFN(RequestGetProxyPort)( HREQUEST rq, UINT* pPort );
 
-  // mark reequest as complete with status and data 
+  // mark request as complete with status and data 
   REQUEST_RESULT
         SCFN(RequestSetSucceeded)( HREQUEST rq, UINT status, LPCBYTE dataOrNull, UINT dataLength);
   
-  // mark reequest as complete with failure and optional data 
+  // mark request as complete with failure and optional data 
   REQUEST_RESULT
         SCFN(RequestSetFailed)( HREQUEST rq, UINT status, LPCBYTE dataOrNull, UINT dataLength );
 
@@ -174,6 +176,12 @@ struct SciterRequestAPI
   // get received (so far) data
   REQUEST_RESULT
         SCFN(RequestGetData)( HREQUEST rq, LPCBYTE_RECEIVER* rcv, LPVOID rcv_param );
+
+  // get requestor element or document this request was issued for.
+  // NOTE: the element ref is NOT addrefed
+  REQUEST_RESULT
+       SCFN(RequestGetRequestor)(HREQUEST rq, HELEMENT* pElement);
+
 
 #if 0
   // issues http request, creates instance of 

@@ -21,6 +21,7 @@
 
 #include "sciter-x-request.h"
 #include "sciter-x-api.h"
+#include "sciter-x-dom.hpp"
 
 #if defined(__cplusplus) && !defined( PLAIN_API_ONLY )
 
@@ -123,6 +124,12 @@ namespace sciter
         out.push_back(nv);
       }
       return out;
+    }
+
+    dom::element requestor() {
+      HELEMENT he = 0;
+      rapi()->RequestGetRequestor(hrq, &he);
+      return dom::element(he);
     }
     
   };

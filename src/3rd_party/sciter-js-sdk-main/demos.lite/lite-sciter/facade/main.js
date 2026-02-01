@@ -53,6 +53,8 @@ function init() {
     //caption.requestPaint(); 
   };
   //caption.requestPaint();
+
+  console.log("init");
 }
 
 init();

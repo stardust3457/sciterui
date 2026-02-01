@@ -90,11 +90,24 @@ typedef SBOOL SC_CALLBACK SciterBehaviorFactory( LPCSTR, HELEMENT, LPElementEven
 
   typedef enum KEYBOARD_STATES
   {
-      CONTROL_KEY_PRESSED = 0x1,
-      SHIFT_KEY_PRESSED = 0x2,
-      ALT_KEY_PRESSED = 0x4,
-      RIGHT_SHIFT_KEY_PRESSED = 0x8,
-      CMD_KEY_PRESSED = 0x10,
+    KEYBOARD_STATE_LSHIFT = 0x0001,
+    KEYBOARD_STATE_RSHIFT = 0x0002,
+    KEYBOARD_STATE_LCONTROL = 0x0040,
+    KEYBOARD_STATE_RCONTROL = 0x0080,
+    KEYBOARD_STATE_LALT = 0x0100,
+    KEYBOARD_STATE_RALT = 0x0200,
+    KEYBOARD_STATE_LCOMMAND = 0x0400,
+    KEYBOARD_STATE_RCOMMAND = 0x0800,
+    KEYBOARD_STATE_NUM = 0x1000,
+    KEYBOARD_STATE_CAPS = 0x2000,
+    KEYBOARD_STATE_MODE = 0x4000,
+
+    KEYBOARD_STATE_CONTROL = (KEYBOARD_STATE_LCONTROL | KEYBOARD_STATE_RCONTROL),
+    KEYBOARD_STATE_SHIFT = (KEYBOARD_STATE_LSHIFT | KEYBOARD_STATE_RSHIFT),
+    KEYBOARD_STATE_ALT = (KEYBOARD_STATE_LALT | KEYBOARD_STATE_RALT),
+    KEYBOARD_STATE_COMMAND = (KEYBOARD_STATE_LCOMMAND | KEYBOARD_STATE_RCOMMAND), // "command key" on OSX, "win" on Windows
+
+
   } KEYBOARD_STATES;
 
 // parameters of evtg == HANDLE_INITIALIZATION
@@ -501,6 +514,8 @@ typedef SBOOL SC_CALLBACK SciterBehaviorFactory( LPCSTR, HELEMENT, LPElementEven
                                      //   4. call sciter::video_destination::start_streaming(...) providing needed parameters
                                      //      call sciter::video_destination::render_frame(...) as soon as they are available
                                      //      call sciter::video_destination::stop_streaming() to stop the rendering (a.k.a. end of movie reached)
+
+      VIDEO_SOURCE_CREATED = 0xD5,
 
       VIDEO_FRAME_REQUEST = 0xD8,    // animation step, a.k.a. animation frame
 

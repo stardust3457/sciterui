@@ -24,43 +24,6 @@
 		F8E8DBA28B76A594F44F49E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		492A7E7A2D7CB14100640F53 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 492A7E702D7CB14100640F53 /* gsciter.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B5EECDE958DCF49BE802D429;
-			remoteInfo = gsciter;
-		};
-		492A7E7D2D7CB14100640F53 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 492A7E712D7CB14100640F53 /* sciter-sqlite.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 09F62F943230E84619CC75D4;
-			remoteInfo = "sciter-sqlite";
-		};
-		492A7E802D7CB14100640F53 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 492A7E722D7CB14100640F53 /* sciter-webview.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F274F71B2206C60DFD14055B;
-			remoteInfo = "sciter-webview";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		03F521D30765F40588D29813 /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		06C20178D4E5552A5BF3A7B8 /* sqlite3ext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sqlite3ext.h; path = "../../sciter-sqlite/sqlite3ext.h"; sourceTree = "<group>"; };
 		0B88F2F87F716AAAA1BF1938 /* sciter-sqlite-rs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "sciter-sqlite-rs.cpp"; path = "../../sciter-sqlite/sciter-sqlite-rs.cpp"; sourceTree = "<group>"; };
@@ -70,10 +33,7 @@
 		188B817B6F04F5AD682D37BB /* behavior_video_generator_direct.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = behavior_video_generator_direct.cpp; path = ../../include/behaviors/behavior_video_generator_direct.cpp; sourceTree = "<group>"; };
 		191D463E5D31177051029C7E /* sciter-sqlite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "sciter-sqlite.h"; path = "../../sciter-sqlite/sciter-sqlite.h"; sourceTree = "<group>"; };
 		3F1295368C758B6802948B76 /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = "../../sciter-sqlite/sqlite3.h"; sourceTree = "<group>"; };
-		492A7E702D7CB14100640F53 /* gsciter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = gsciter.xcodeproj; sourceTree = "<group>"; };
-		492A7E712D7CB14100640F53 /* sciter-sqlite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "sciter-sqlite.xcodeproj"; sourceTree = "<group>"; };
-		492A7E722D7CB14100640F53 /* sciter-webview.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "sciter-webview.xcodeproj"; sourceTree = "<group>"; };
-		49D499B7ECC2C0697BE89FF7 /* usciter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = usciter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		49D499B7ECC2C0697BE89FF7 /* usciter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = usciter.app; path = usciter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		541B6585E6A92F774F81D3C5 /* sciter-gles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "sciter-gles.h"; path = "../../include/gles/sciter-gles.h"; sourceTree = "<group>"; };
 		5BDA69FACFC2E1ACF210903A /* sciter-sqlite-db.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "sciter-sqlite-db.cpp"; path = "../../sciter-sqlite/sciter-sqlite-db.cpp"; sourceTree = "<group>"; };
 		7C2720A51A082157F18666E5 /* behavior_drawing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = behavior_drawing.cpp; path = ../../include/behaviors/behavior_drawing.cpp; sourceTree = "<group>"; };
@@ -101,6 +61,19 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		03F521D30765F40588D29813 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXGroup section */
 		3569423138DA1463BA46B871 /* gles */ = {
 			isa = PBXGroup;
@@ -111,36 +84,9 @@
 			name = gles;
 			sourceTree = "<group>";
 		};
-		492A7E732D7CB14100640F53 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				492A7E7B2D7CB14100640F53 /* gsciter.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		492A7E752D7CB14100640F53 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				492A7E7E2D7CB14100640F53 /* sciter-sqlite.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		492A7E772D7CB14100640F53 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				492A7E812D7CB14100640F53 /* sciter-webview.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		552008FFE82B61F13060573F /* usciter */ = {
 			isa = PBXGroup;
 			children = (
-				492A7E702D7CB14100640F53 /* gsciter.xcodeproj */,
-				492A7E712D7CB14100640F53 /* sciter-sqlite.xcodeproj */,
-				492A7E722D7CB14100640F53 /* sciter-webview.xcodeproj */,
 				8A2CBBB8DA40506A5CBE81F8 /* demos */,
 				5E8C725002DF100215175890 /* include */,
 				A9A9963AD1E44EECB97FDC7A /* sciter-sqlite */,
@@ -248,62 +194,17 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "usciter" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = en;
 			hasScannedForEncodings = 1;
-			knownRegions = (
-				en,
-				Base,
-			);
 			mainGroup = 552008FFE82B61F13060573F /* usciter */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 492A7E732D7CB14100640F53 /* Products */;
-					ProjectRef = 492A7E702D7CB14100640F53 /* gsciter.xcodeproj */;
-				},
-				{
-					ProductGroup = 492A7E752D7CB14100640F53 /* Products */;
-					ProjectRef = 492A7E712D7CB14100640F53 /* sciter-sqlite.xcodeproj */;
-				},
-				{
-					ProductGroup = 492A7E772D7CB14100640F53 /* Products */;
-					ProjectRef = 492A7E722D7CB14100640F53 /* sciter-webview.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
-				AF0496BD208FAF2FCF90D4FD /* usciter */,
+				AF0496BD208FAF2FCF90D4FD /* usciter.app */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		492A7E7B2D7CB14100640F53 /* gsciter.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = gsciter.app;
-			remoteRef = 492A7E7A2D7CB14100640F53 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		492A7E7E2D7CB14100640F53 /* sciter-sqlite.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = "sciter-sqlite.dylib";
-			remoteRef = 492A7E7D2D7CB14100640F53 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		492A7E812D7CB14100640F53 /* sciter-webview.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = "sciter-webview.dylib";
-			remoteRef = 492A7E802D7CB14100640F53 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		42CFCC47E72269F9F95AB287 /* Resources */ = {
@@ -337,6 +238,9 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		2718B628CB6B53DADDA39C68 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -354,12 +258,18 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
+				MACOSX_DEPLOYMENT_TARGET = (
+					10.13,
+				);
 				OBJROOT = obj/x64/Release/usciter;
 				ONLY_ACTIVE_ARCH = NO;
 				SYMROOT = ../../bin/macosx;
-				USER_HEADER_SEARCH_PATHS = ../../include;
+				USER_HEADER_SEARCH_PATHS = (
+					../../include,
+				);
 			};
 			name = Release;
 		};
@@ -382,12 +292,18 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
+				MACOSX_DEPLOYMENT_TARGET = (
+					10.13,
+				);
 				OBJROOT = obj/x64/Debug/usciter;
 				ONLY_ACTIVE_ARCH = YES;
 				SYMROOT = ../../bin/macosx;
-				USER_HEADER_SEARCH_PATHS = ../../include;
+				USER_HEADER_SEARCH_PATHS = (
+					../../include,
+				);
 			};
 			name = Debug;
 		};
@@ -397,9 +313,13 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = ../../bin/macosx;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
 				INSTALL_PATH = "\"$(HOME)/Applications\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = (
+					10.13,
+				);
 				PRODUCT_NAME = usciter;
 			};
 			name = Release;
@@ -411,9 +331,13 @@
 				CONFIGURATION_BUILD_DIR = ../../bin/macosx;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
 				INSTALL_PATH = "\"$(HOME)/Applications\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = (
+					10.13,
+				);
 				PRODUCT_NAME = usciter;
 			};
 			name = Debug;
@@ -430,7 +354,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C1239406657631B877AE7A46 /* Build configuration list for PBXNativeTarget "usciter" */ = {
+		C1239406657631B877AE7A46 /* Build configuration list for PBXNativeTarget "usciter.app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A31FE1CCCB5A9A7EB2F6280C /* Debug */,
@@ -440,6 +364,6 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-	};
-	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+};
+rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
 }

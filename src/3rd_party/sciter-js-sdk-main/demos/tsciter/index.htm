@@ -1,14 +1,18 @@
 ﻿<html window-width="800px"
       window-height="600px"
-      window-icon="window-icon.png">
+      window-min-width="640px"
+      window-min-height="480px"
+      window-icon="window-icon.png"
+      window-alignment="5">
     <head>
         <title>Test</title>
         <style>
 
 body {
   //font-family: sans-serif;
-  //font-size:20pt;
   font:system;
+  font-size:20pt;
+  background:infobackground;
 }
 
 section {
@@ -47,14 +51,20 @@ text.ellipsis {
         </script>
     </head>
     <body>
-      <text.ellipsis>The quick brown fox jumps over the lazy dog</text>
-<!--
-      <p>The quick brown 🦊 jumps over the lazy 🐶</p>
-      <p style="border:1px solid; line-height:1em">Test xyz</p>
+<!--      <text.ellipsis>The quick brown fox jumps over the lazy dog</text>
 
-      <input|text value="Test xyz"/> 
+
+        -->
+
+
+      <p title="tooltip">The quick brown 🦊 jumps over the lazy 🐶</p>
+      <p>Emojis &#x1f1e6;&#x1f1fd; 👨🏽‍🦳👨🏽‍🚒</p>
+
+      <p #test style="border:1px solid;">Test <sub>sub</sub> and <sup>sup</sup></p>
+
+      <input|text #test value="Test xyz"/> 
       <button>Test xyz</button>
-      <select>
+      <select #test>
         <option>Aaa</option>
         <option>Bbb</option>
         <option>Ccc</option>
@@ -62,6 +72,6 @@ text.ellipsis {
       <button|radio>Test xyz</button>
       <button|radio>Test abc</button>
       <button|checkbox>Test xyz</button>
--->      
+     
     </body>
 </html>

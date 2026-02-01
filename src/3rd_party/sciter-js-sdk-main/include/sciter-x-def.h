@@ -213,6 +213,7 @@ typedef struct SCN_DATA_LOADED
                                          status = 100..505 - http response status, Note: 200 - OK!
                                          status > 12000 - wininet error code, see ERROR_INTERNET_*** in wininet.h
                                  */
+    HREQUEST requestId;        /**< [in] request handle that can be used with sciter-x-request API */
 } SCN_DATA_LOADED;
 
 typedef SCN_DATA_LOADED * LPSCN_DATA_LOADED;
@@ -506,6 +507,7 @@ typedef enum SCITER_RT_OPTIONS
 
    SCITER_ENABLE_DIRECT_COMPOSITION = 20, // hWnd - N/A , TRUE/FALSE, enables DirectComposition on Windows 11. 
                                           //        TRUE by default on Windows 11. Set it to FALSE if window will host child windows.
+   SCITER_SET_ROOT_CA = 21,               // hWnd - N/A , const char* certificates, in format acceptable by mbedtls_x509_crt_parse()
 
 } SCITER_RT_OPTIONS;
 
@@ -526,6 +528,10 @@ typedef enum SCITER_RT_OPTIONS
    SCITER_APP_INIT = 2,     /// pass argc/argv to application: p1 - argc, p2 - CHAR** argv 
    SCITER_APP_SHUTDOWN = 3, /// free resources of the application 
    SCITER_APP_RUN  = 4,     /// scapp mode: load JS and run message pump loop until SCITER_APP_STOP or main window closure, p1 - JS url, p2 - 0 or SciterPrimordialLoader; 
+   SCITER_APP_LOOP_ITERATION = 6, /// does single message pump loop iteration, SCITER_APP_LOOP is essentially this:
+                                  /// while( SciterExec(SCITER_APP_LOOP_ITERATION,0,0) );
+   SCITER_APP_LOOP_HEARTBIT = 7,  /// checks outstanding tasks and timers,
+                                  /// like SCITER_APP_LOOP_ITERATION but without message processing 
  } SCITER_APP_CMD;
 
  /**

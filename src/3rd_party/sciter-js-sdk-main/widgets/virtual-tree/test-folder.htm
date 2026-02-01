@@ -20,12 +20,15 @@
 import {VirtualTree, TreeController} from "virtual-tree.js";
 
 import {fs} from "@sys";
+import {drives} from "@env";
 
 function cmp(a,b) {
   if(a.isdir && !b.isdir) return -1;
   if(b.isdir && !a.isdir) return 1;
   return a.name.localeCompare(b.name);
 }
+
+function pathOf(item) { return item.parent ? (item.parent + "/" + item.name) : item.name; }
 
 class FolderController extends TreeController {
   rootFolder;
@@ -35,26 +38,27 @@ class FolderController extends TreeController {
     this.rootFolder = rootPath;
   }
 
-  keyOf(item) { return item.name }
-  textOf(item) { return [<icon filename={item.parent + "/" + item.name}/>,item.name] } // may return VDOM
-  isNode(item) { return item.type & fs.UV_DIRENT_DIR }
+  keyOf(item) { return item.name; }
+  textOf(item) { return [<icon filename={pathOf(item)} />, item.name ]; } // may return VDOM
+  isNode(item) { return item.type & fs.UV_DIRENT_DIR; }
   kidsOf(item) { 
-    const path = item.parent + "/" + item.name;
-    const r = fs.sync.readdir(path)
+    const path = pathOf(item);
+    const r = fs.sync.readdir(path);
     r.forEach(entry => { entry.parent = path; entry.isdir = (entry.type & fs.UV_DIRENT_DIR)  != 0 });
     r.sort(cmp);
     return r;
   }
   get roots() {
     const path = this.rootFolder;
-    const r = fs.sync.readdir(path); 
-    r.forEach(entry => { entry.parent = path; entry.isdir = (entry.type & fs.UV_DIRENT_DIR)  != 0 });
+    let r = [];
+    r = path ? fs.sync.readdir(path) : drives(); 
+    r.forEach(entry => { entry.parent = path; entry.isdir = (entry.type & fs.UV_DIRENT_DIR)  != 0 });    
     r.sort(cmp);
     return r;
   }
 }
 
-const fsController = new FolderController( URL.toPath(__DIR__ + "../.."));
+const fsController = new FolderController( "" /*URL.toPath(__DIR__ + "../..")*/);
 
 document.body.append(<VirtualTree id="tree" controller={fsController} treelines={true} />);
 

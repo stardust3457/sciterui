@@ -7,7 +7,6 @@ html {
   border: window-frame-width solid transparent;
   //border-radius:8px;
   //box-shadow:1px 1px 10px rgba(0,0,0,0.2);
-
 }
 
 html:owns-focus {
@@ -31,7 +30,8 @@ html:owns-focus {
 
 html > header { width:*; flow:horizontal; height:window-caption-height; margin:0; 
                 background-color:color(window-caption-back); color: color(window-caption-text); } 
-html > header > window-caption { display:block; line-height:window-caption-height; width:*; padding:0 1em; }
+html > header > window-caption { display:block; line-height:window-caption-height; width:*; padding:0 1em; 
+                                 white-space:nowrap; overflow-x:hidden; text-overflow:ellipsis; }
 html > header > window-buttons { display:block; flow:horizontal; width:max-content; height:*; }
 html > header > window-buttons > window-button { 
   behavior:clickable; 
@@ -54,5 +54,7 @@ html > header > window-buttons > window-button[role="window-maximize"] { foregro
 html[window-state="maximized"] { border-color:transparent; }
 html[window-state="maximized"] > header > window-buttons > window-button[role="window-maximize"] { foreground-image: url(icon:window-restore); }
 html > header > window-buttons > window-button[role="window-minimize"] { foreground-image: url(icon:window-minimize); }
+
+html[window-state="full-screen"] > header { visibility:none; }
 
 frame { size:*; background-color: transparent; }

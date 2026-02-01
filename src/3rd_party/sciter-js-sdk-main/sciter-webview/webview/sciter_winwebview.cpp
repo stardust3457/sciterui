@@ -3,12 +3,13 @@
 #include "sciter_winwebview.h"
 #include "sciter_edgewebview.h"
 #include "sciter_iewebview.h"
+#include <versionhelpers.h>
 
 namespace webview {
 
     sciter_winwebview::sciter_winwebview(bool debug /*= false*/, void* parent /*= nullptr*/)
     {
-        m_isEdge = true;
+        m_isEdge = IsWindows10OrGreater();
         m_winbrowser = nullptr;
         HWND parentWnd = (HWND)parent;
         if (m_isEdge) {

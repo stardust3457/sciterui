@@ -37,6 +37,27 @@ static UINT SC_CALLBACK handle_notification(LPSCITER_CALLBACK_NOTIFICATION pnm, 
 static bool sciter_needs_drawing = true;
 static RECT to_paint = { 0,0,0,0 };
 
+SBOOL SC_CALLBACK DomEventProc(LPVOID tag, HELEMENT he, UINT evtg, LPVOID prms) {
+  if (evtg != HANDLE_SCRIPTING_METHOD_CALL)
+    return FALSE;
+
+  SCRIPTING_METHOD_PARAMS* p = (SCRIPTING_METHOD_PARAMS*)prms;
+
+  // handle: r = Window.this.xcall("add",1,2);
+
+  if (strcmp(p->name, "add") != 0) return FALSE;
+  if (p->argc != 2) return FALSE;
+
+  int a, b;
+  // fetch args
+  ValueIntData(&p->argv[0], &a);
+  ValueIntData(&p->argv[1], &b);
+  // set result
+  ValueIntDataSet(&p->result, a + b, T_INT, 0);
+
+  return TRUE;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -50,9 +71,9 @@ int main(int argc, char *argv[])
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
-    sciter::debug_output_console yes;
+    //sciter::debug_output_console yes;
 
-    //SciterSetOption(NULL, SCITER_SET_DEBUG_MODE, TRUE);
+    SciterSetOption(NULL, SCITER_SET_DEBUG_MODE, TRUE);
 
     glfwSetErrorCallback(error_callback);
 
@@ -64,6 +85,8 @@ int main(int argc, char *argv[])
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
+    SciterWindowAttachEventHandler(window, DomEventProc, NULL, HANDLE_SCRIPTING_METHOD_CALL);
 
     // setup event callbacks:
     glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -174,6 +197,23 @@ int main(int argc, char *argv[])
 
 static MOUSE_BUTTONS mbutton = MOUSE_BUTTONS(0);
 
+static KEYBOARD_STATES key_states(GLFWwindow* window) {
+  UINT ks = 0;
+  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) ks |= KEYBOARD_STATE_LSHIFT;
+  if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) ks |= KEYBOARD_STATE_RSHIFT;
+  if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) ks |= KEYBOARD_STATE_LCONTROL;
+  if (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) ks |= KEYBOARD_STATE_RCONTROL;
+  if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) ks |= KEYBOARD_STATE_LALT;
+  if (glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS) ks |= KEYBOARD_STATE_RALT;
+  if (glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS) ks |= KEYBOARD_STATE_LCOMMAND;
+  if (glfwGetKey(window, GLFW_KEY_RIGHT_SUPER) == GLFW_PRESS) ks |= KEYBOARD_STATE_RCOMMAND;
+
+  if (glfwGetKey(window, GLFW_KEY_NUM_LOCK) == GLFW_PRESS) ks |= KEYBOARD_STATE_NUM;
+  if (glfwGetKey(window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS) ks |= KEYBOARD_STATE_CAPS;
+  return KEYBOARD_STATES(ks);
+}
+
+
 static void mouse_button_callback(GLFWwindow * window, int button, int action, int modifiers)
 {
   MOUSE_EVENTS  me = action == GLFW_PRESS ? MOUSE_DOWN : MOUSE_UP;
@@ -183,16 +223,11 @@ static void mouse_button_callback(GLFWwindow * window, int button, int action, i
     case GLFW_MOUSE_BUTTON_2: mbutton = PROP_MOUSE_BUTTON; break;
     case GLFW_MOUSE_BUTTON_3: mbutton = MIDDLE_MOUSE_BUTTON; break;
   }
-  //KEYBOARD_STATES
-  UINT ks = 0;
-  if (modifiers & GLFW_MOD_SHIFT) ks |= SHIFT_KEY_PRESSED;
-  if (modifiers & GLFW_MOD_CONTROL) ks |= CONTROL_KEY_PRESSED;
-  if (modifiers & GLFW_MOD_ALT) ks |= ALT_KEY_PRESSED;
 
   double x, y; glfwGetCursorPos(window, &x, &y);
   POINT pos = {int(x),int(y)};
 
-  SciterProcX(window, SCITER_X_MSG_MOUSE(me, mbutton, KEYBOARD_STATES(ks),pos));
+  SciterProcX(window, SCITER_X_MSG_MOUSE(me, mbutton, key_states(window), pos));
   if (me == MOUSE_UP)
     mbutton = MOUSE_BUTTONS(0);
 }
@@ -226,11 +261,8 @@ static void mouse_wheel_callback(GLFWwindow * window, double dx, double dy)
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
   KEY_EVENTS me = GLFW_RELEASE == action ? KEY_UP : KEY_DOWN;
-  UINT ks = 0;
-  if (mods & GLFW_MOD_SHIFT) ks |= SHIFT_KEY_PRESSED;
-  if (mods & GLFW_MOD_CONTROL) ks |= CONTROL_KEY_PRESSED;
-  if (mods & GLFW_MOD_ALT) ks |= ALT_KEY_PRESSED;
-  SciterProcX(window, SCITER_X_MSG_KEY(me, UINT(key), KEYBOARD_STATES(ks)));
+
+  SciterProcX(window, SCITER_X_MSG_KEY(me, UINT(key), key_states(window)));
 }
 
 static void char_callback(GLFWwindow* window, unsigned int codepoint)

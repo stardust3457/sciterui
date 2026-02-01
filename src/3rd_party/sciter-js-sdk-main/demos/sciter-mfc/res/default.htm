@@ -1,68 +1,72 @@
 <html>
-  <head>
-    <title></title>
-    <style>
-    
-    html {
-      background: radial-gradient(75% 75%, circle farthest-side, white, orange, rgb(204,0,0));
-      color:#fff;
+<head>
+  <style>
+    body {
+      font: system;
+      margin: 0;
     }
-    
-    html:rtl {
-      mapping: left-to-right(background);
+
+    table {
+      flow: table-fixed;
+      border-collapse: collapse;
+      width: *;
     }
-    
-    
-    body { 
-      size:*;
-      overflow:auto; 
+
+    thead {
+      behavior: column-resizer;
     }
-    
-    </style>
-    <script type="text/tiscript">
-     
-      self.select("button#open").on("click", function(){
-      
-        var fn = view.selectFile(#open,
-          "HTML Files (*.htm,*.html)|*.HTM;*.HTML|All Files (*.*)|*.*" , "html" );
-        if( fn )
-          view.load(fn);
-     
-      });
-    
-    </script>
-  </head>
+
+    tbody {
+      height: 400px; /* fixed height to force scrolling */
+      overflow-y: scroll-indicator; /* show scrollbar */
+      overflow-x: hidden;
+      display: block;
+    }
+
+    //tr {
+    //  display: table;
+    //  width: 100%;
+    //}
+
+    td {
+      border: 1px solid gray;
+      padding: 4px;
+      width: 150px;
+      height: 150px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  </style>
+</head>
 <body>
-
-  <h1>Minimal Sciter MFC Application</h1>
-
-  <button id="open">Open HTML file</button> 
-
-  <select>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>D</option>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>D</option>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>D</option>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>D</option>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>D</option>
-  </select>
-
-      Animated image
-      <img src="sciter:busy.png">
-
+  <table>
+    <thead>
+      <tr><th>Column A</th><th>Column B</th></tr>
+    </thead>
+    <tbody>
+      <!-- Generate lots of rows to force scrolling -->
+      <tr><td>Row 1</td><td>Data</td></tr>
+      <tr><td>Row 2</td><td>Data</td></tr>
+      <tr><td>Row 3</td><td>Data</td></tr>
+      <tr><td>Row 4</td><td>Data</td></tr>
+      <tr><td>Row 5</td><td>Data</td></tr>
+      <tr><td>Row 6</td><td>Data</td></tr>
+      <tr><td>Row 7</td><td>Data</td></tr>
+      <tr><td>Row 8</td><td>Data</td></tr>
+      <tr><td>Row 9</td><td>Data</td></tr>
+      <tr><td>Row 10</td><td>Data</td></tr>
+      <tr><td>Row 11</td><td>Data</td></tr>
+      <tr><td>Row 12</td><td>Data</td></tr>
+      <tr><td>Row 13</td><td>Data</td></tr>
+      <tr><td>Row 14</td><td>Data</td></tr>
+      <tr><td>Row 15</td><td>Data</td></tr>
+      <tr><td>Row 16</td><td>Data</td></tr>
+      <tr><td>Row 17</td><td>Data</td></tr>
+      <tr><td>Row 18</td><td>Data</td></tr>
+      <tr><td>Row 19</td><td>Data</td></tr>
+      <tr><td>Row 20</td><td>Data</td></tr>
+    </tbody>
+  </table>
 </body>
 </html>

@@ -106,8 +106,8 @@ function makePath(dir, subdirs, nameext) {
 async function convertSvgToIcns(inf, outp) {
 
   async function svg2png(pathin,pathout,w,h) {
-     w *= 1ppx;
-     h *= 1ppx;
+     w = Length.ppx(w);
+     h = Length.ppx(h);
      let svg = await Graphics.Image.load(pathin);
      console.assert(svg,`cannot read ${svg}`);
      console.log(svg);

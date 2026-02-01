@@ -105,7 +105,7 @@ typedef enum VALUE_UNIT_TYPE_STRING
     UT_STRING_STRING = 0,        // string
     UT_STRING_ERROR  = 1,        // is an error string
     UT_STRING_SECURE = 2,        // secure string ("wiped" on destroy)
-    UT_STRING_SYMBOL = 0xffff,   // symbol in tiscript sense
+    UT_STRING_SYMBOL = 0xffff,   // symbol/name[token]
 } VALUE_UNIT_TYPE_STRING;
 
 // Native functor

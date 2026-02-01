@@ -4,7 +4,7 @@
 <head>
 <script type="module">
 
-  import { h, Component, render } from 'preact';
+  import { h, Component, render } from "./preact.js";
 
   JSX = h;   // let's use PReact::h() as a driver of JSX expressions
 
@@ -13,8 +13,9 @@
     state = { value: '', name: 'world' };
 
     onInput = (ev) => {
+      console.log(ev.target, ev.target.value);
       this.setState({ value: ev.target.value });
-    };
+    }
 
     // Add a submit handler that updates the `name` with the latest input value
     onSubmit = (ev) => {

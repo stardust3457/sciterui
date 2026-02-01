@@ -532,4 +532,33 @@ if _TARGET_OS == "windows" then
 
 end
 
+include "demos.lite/lite-sdl/premake-sdl.lua"
+
+project "lite-sciter-sdl"
+  --kind "ConsoleApp"
+  kind "WindowedApp"
+  language "C++"
+
+  defines "WINDOWLESS"
+
+  cppdialect "C++17" 
+
+  targetdir ("bin/" .. osabbr() .. "/%{cfg.platform}")
+
+  dpiawareness "HighPerMonitor"
+
+  filter {}
+
+  -- ours:
+  files { 
+    "include/*.h", 
+    "include/*.hpp",
+    "demos.lite/lite-sdl/*.h",
+    "demos.lite/lite-sdl/raster/*.h",
+    "demos.lite/lite-sdl/raster/main.cpp",
+  }
+  
+  -- theirs, SDL:
+  include_files_sdl() 
+
 --include "ffmpeg/premake5.lua"

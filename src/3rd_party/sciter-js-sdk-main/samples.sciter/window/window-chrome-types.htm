@@ -45,7 +45,6 @@ document.on("click","button#window-frame-solid", () => {
   var wnd = new Window({ 
       url   : __DIR__ + "chrome-types/window-frame-solid.htm", 
       state : Window.WINDOW_SHOWN,
-      parent: Window.this,
   });
 });
 
@@ -70,6 +69,7 @@ document.on("click","button#window-frame-tool", () => {
       type  : Window.TOOL_WINDOW,
       url   : __DIR__ + "chrome-types/window-frame-tool.htm", 
       state : Window.WINDOW_SHOWN,
+      parent: Window.this,
   });
 });
 

@@ -263,20 +263,20 @@ class ElementMetrics extends View {
 
     return <section styleset="facade.css#element-metrics">
       <header>Units:
-        <button|radio .units value="ppx" state-checked={!this.viewstate.units || this.viewstate.units=="ppx"}>screen px</button>
-        <button|radio .units value="px" state-checked={this.viewstate.units=="px"}>css px</button>
+        <button|radio .units value="ppx" state-checked={!this.viewstate.units || this.viewstate.units=="ppx"} >screen px</button>
+        <button|radio .units value="px" state-checked={this.viewstate.units=="px"} >css px</button>
       </header>
       <div.box.margin>    
         <var>{u(margin[1])}</var>
         <var>{u(margin[0])}</var>
         <var>{u(margin[2])}</var>
         <var>{u(margin[3])}</var>
-        <div .box.border>    
+        <div.box.border>    
           <var>{u(border[1])}</var>
           <var>{u(border[0])}</var>
           <var>{u(border[2])}</var>
           <var>{u(border[3])}</var>
-          <div .box.padding>
+          <div.box.padding>
             <var>{u(padding[1])}</var>
             <var>{u(padding[0])}</var>
             <var>{u(padding[2])}</var>
@@ -404,20 +404,17 @@ class DynamicStyle extends View {
     
     const list = [];
     
-    function isColor(prop, val) {
-      return prop.indexOf('color') !== -1 || prop === 'background' || prop === 'fill';
-    }
+    //function isColor(prop, val) {
+    //  return prop.indexOf('color') !== -1 || prop === 'background' || prop === 'fill';
+    //}
    
     if (this.viewstate.elementDetails) {
       for (const [index, style] of this.state.entries()) {
         list.push(<input|checkbox index={index} prop={style.prop} state-checked={style.checked} />);
         list.push(<dt prop={style.prop}>{style.prop}</dt>);
-        if(isColor(style.prop)){
-          list.push(<dd.color prop={style.prop} index={index} style={`fill: ${style.val}`}>{style.val}</dd>);
-        }
-        else {
-          list.push(<dd prop={style.prop} index={index} >{style.val}</dd>);
-        }
+        list.push(<dd><StyleValue value={style.val}/></dd>);
+        //if(isColor(style.prop)){list.push(<dd.color prop={style.prop} index={index} style={`fill: ${style.val}`}>{style.val}</dd>);}
+        //else {list.push(<dd prop={style.prop} index={index} >{style.val}</dd>);}
       }
     }
 
@@ -434,6 +431,36 @@ class DynamicStyle extends View {
       </menu>
     </rule>;
   }
+}
+
+function StyleValueColor({value}) {
+  return <var.color style={`fill: ${value}`}>{value}</var>;
+}
+
+function StyleValueLength({value}) {
+  return <var.length>{value}</var>;
+}
+
+function StyleValue({value} /*sublimated!*/) {
+
+   const [type, val, delimeter] = value;
+   switch(type) {
+      case "list": {
+        let n = 0; let out = [];
+        for(let subval of val) {
+          if(n++) out.push(delimeter);
+          out.push( <StyleValue value={subval} />);
+        }
+        return out;
+      }
+      case "color":
+        return <StyleValueColor value={val}/>;
+      case "length":
+        return <StyleValueLength value={val}/>;
+      default:
+        return <var>{val}</var>;
+   }
+
 }
 
 export class ElementDetailsView extends View {
@@ -539,9 +566,9 @@ export class ElementDetailsView extends View {
         return val;
       }
       
-      function isColor(prop, val) {
-        return prop.indexOf('color') !== -1 || prop === 'background' || prop === 'fill';
-      }
+      //function isColor(prop, val) {
+      //  return prop.indexOf('color') !== -1 || prop === 'background' || prop === 'fill';
+      //}
 
       switch (ctab) {
         case "used":
@@ -550,10 +577,11 @@ export class ElementDetailsView extends View {
           for (const [prop, val] of namvals(this.viewstate.elementDetails.usedStyleProperties)) {
             list.push(<input|checkbox prop={prop} state-checked={!usedStyle.includes(prop)}/>);
             list.push(<dt prop={prop}>{prop}</dt>);
-            list.push(isColor(prop) ?
-              <dd.color prop={prop} style={`fill: ${val}`}>{fval(val)}</dd>
-              : <dd prop={prop} >{fval(val)}</dd>
-              );
+            //list.push(isColor(prop) ?
+            //  <dd.color prop={prop} style={`fill: ${val}`}>{fval(val)}</dd>
+            //  : <dd prop={prop} >{fval(val)}</dd>
+            //  );
+            list.push(<dd><StyleValue value={val}/></dd>);
           }
           break;
         case "inherited": {
@@ -561,10 +589,11 @@ export class ElementDetailsView extends View {
           if (def && !def.type) {
             for (const [prop, val] of namvals(def)) {
               list.push(<dt>{prop}</dt>);
-              list.push(isColor(prop) ?
-                <dd.color prop={prop} style={`fill: ${val}`}>{fval(val)}</dd>
-                : <dd prop={prop} >{fval(val)}</dd>
-              );
+              //list.push(isColor(prop) ?
+              //  <dd.color prop={prop} style={`fill: ${val}`}>{fval(val)}</dd>
+              //  : <dd prop={prop} >{fval(val)}</dd>
+              //);
+              list.push(<dd><StyleValue value={val}/></dd>);
             }
           }
         }
@@ -586,10 +615,11 @@ export class ElementDetailsView extends View {
             }
             for (const [prop, val] of namvals(properties)) {
               list.push(<dt>{prop}</dt>);
-              list.push(isColor(prop) ?
-                <dd.color prop={prop} style={`fill: ${val}`}>{fval(val)}</dd>
-                : <dd prop={prop} >{fval(val)}</dd>
-              );
+              list.push(<dd><StyleValue value={val}/></dd>);
+              //list.push(isColor(prop) ?
+              //  <dd.color prop={prop} style={`fill: ${val}`}>{fval(val)}</dd>
+              //  : <dd prop={prop} >{fval(val)}</dd>
+              //);
             }
           }
           break;

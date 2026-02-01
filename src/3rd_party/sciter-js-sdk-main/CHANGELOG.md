@@ -1,3 +1,643 @@
+## 6.0.3.5
+
+### Fixes:
+
+* [osx] attempt to fix AV on window destruction while animating;
+* [windows] fix of AV in `Window.this.icon = ... ICO image ...`;
+* [windows] fix of possible AV at window closing;
+* [css] .ico rendering tweak for cases when target place < smallest bitmap in icon;
+* [css] fix of backdrop-filter rendering;
+* [windows] Window.this.state = Window.WINDOW_FULL_SCREEN; tweaks.
+
+## 6.0.3.4
+
+### Fixes:
+
+* [DOM] Fix of mouseleave event generation on window borders.
+* [rendering] Attempt to fix artefacts while setting Window.this.state = ... 
+* [css] `window-frame-width` value is set to 0 at WINDOW_FULL_SCREEN state.
+* [osx] Fix of content distortions on live window resize.
+* [windows, drag-n-drop] - fixing drag of multiple files.
+
+### Internals:
+
+* GLFW that was used as multiplatform windowing backend replaced by custom WING library (GLFW derived but highly modified to match Sciter needs). 
+
+## 6.0.3.3
+
+### Fixes:
+
+* [API] fix of lock from worker thread access to API;
+* `<input|time>` fix of `undefined` value reporting;
+* [DOM] `Window.this.on("statechabge",...)` event generation for `WINDOW_FULL_SCREEN` state;
+* [css] flow:text layout fixes;
+* [reactor] fix of possible AV on MacOS;
+* [css] `vertical-align` fix;
+
+## 6.0.3.2
+
+### Fixes:
+
+* [css] fix of `horizontal-align` handling; 
+* [windowing] fix of `horizontal-align` handling; 
+* [windowing] fix of initial window placement calculation when desktop info is not available (not logged in);
+* [osx] universal binaries (x64 and ARM64) are back.
+
+NOTE: Experimental c-modules feature is removed.
+
+## 6.0.3.1
+
+### Fixes:
+
+* [DOM] fix of inline element rendering when it is taken off (a.k.a. airborn);
+* [Window] fix of "fullscreen window gets minimized on focus lost";
+* [Window] fix of event `activate` generation;
+* [reactor] fix of update after attribute changes;
+* [drawing] fix of drawing elements with `width:0` and/or `height:0`;
+
+## 6.0.3.0
+
+### New:
+
+* [JSX] Runtime state attributes in the form `:statename`. This allows to use JSX to set CSS runtime state flags like `:checked`, `:expanded`, `:collapsed`, `:incomplete`, `:invalid`, etc.:
+* [JSX] `:value` and `:html` virtual state attributes.
+  * `:value={...}` in JSX is an equivalent of `element.value = ...;`;
+  * `:html={string}` in JSX is an equivalent of `element.innerHTML = string;` 
+* [JSX] JSX now preserves type of value attributes:
+  ```js
+    <button|checkbox #test value={42}>Test</button>
+    ...
+    typeof document.$("button#test").value // 42 (number) if :checked
+  ```
+### Fixes:
+
+* [CSS] `vertical-align` is not applied now if element uses flexes for alignment.  
+* [DOM] `<button|checkbox value="...">` sets value attribute rather than checked state. 
+* [CSSOM] Fix of view update after `element.style.variables({...})`; 
+* [Sciter.Lite] Fix of popup elements emulation.
+
+
+## 6.0.2.30
+
+### Fixes:
+
+* [linux] fix of AV when destroying secondary window;
+* [OSX] fix of window z-placement of windows created from script;
+* [DOM] fix of setting `button|checkbox` and `button|checkbox name="..."` value; 
+* [css] fix of margin:* 0; in presence of vertical-align;
+
+## 6.0.2.29
+
+### New:
+
+* [runtime] `env.drives():[]` returns array of paths of mounted drives;
+
+### Fixes:
+
+* `<input|number>` fix of `width:auto` calculation;
+* [API] `SciterCreateWindow(,,, &initialrect)` - if initialrect is provided then window auto position/size calculation is disabled;
+* [reactor] `<option value={...}>`, `<button|checkbox value={...}>` and `<button|radio value={...}>` to preserve type of the passed value;
+* [css] fix of AV in `transform:scale(-1, 1)` in some cases;
+* `behavior:clickable`, fix of focus change on click when the behavior is applied to non-trivial DOM. 
+
+## 6.0.2.28-bis
+
+### Fixes:
+
+* [reactor] fix of `<>fragment</>` handling;
+* [JS] fix of AV in `new Date("").toLocaleString()`;
+
+## 6.0.2.28
+
+* [css] `display:grid; width:max-content;` fix;
+* `Window.this.modal(<dialog width=... height=... alignment=... resizable=...>)`
+* [reactor] fix of `element.content|append|prepend(<>...</>)`;
+* [html] fix of `dir:rtl;` handling;
+* [Reactor] fix of SO in `element.append(<table><tr><td>A</td></tr></table>)`;
+* [DOM] popup removal on window resizing;
+* [DOM] proper selection in `<input|text value="ABC " />`;
+
+## 6.0.2.27
+
+* [dom] timer fixes;
+* [dom] popup enter/leave fixes;
+
+## 6.0.2.26
+
+### New:
+
+New events to be handled on window level (Window.this.on("system-
+\*\*\*",...)):
+* "system-suspend"
+* "system-resume"
+* "system-lock"
+* "system-unlock"
+* "system-logon"
+* "system-logout"
+* "system-shutdown"
+
+### Fixes:
+
+* [css] fix of `content-vertical/horizontal-align` handling inside `box-sizing:border-box`.
+* [reactor] Reactor.get/setContextData() - low level primitive for Reactor.Context implementation. See sdk/samples.reactor/context/ demo.
+* [inspector] CSS reporting improvements;
+
+## 6.0.2.25
+
+### Fixes:
+
+* [DOM] Fix of possible AV on absolute positioned dom element removal;
+* [Windows, direct2d] `<sub>` and `<sup>` rendering fix;
+* [DOM] `<select|dropdown>`, fix of setting value after options change;
+* [Windows] `image.toBytes("jpeg", 85)` - support of image-to-JPEG-bytes serialization;
+* [API] `SciterCreateWindow(SW_POPUP,...)` - fix of AV on only `SW_POPUP` window;
+* [API, Windows] `SciterCreateWindow(..., parent)` is passed to `CreateWindowEx(,parent)` to set owner of newly created window;
+* Internal: build system updated to support arm32 and x32 builds;
+
+## 6.0.2.24
+
+### New:
+
+* [css] `clamp(minval, val, maxval)` support. 
+
+  In Sciter `clamp()` may accept flex units in val so this will work:
+
+  ```
+  div {
+    width: *;
+    padding-left: clamp(100px,*, 400px);
+  }     
+  ```
+  making left padding to be flexible in 100px...400px range.
+
+### Fixes:
+
+* Regression fixes.
+
+## 6.0.2.23
+
+### New:
+
+* .ico and .bmp support on all platforms;
+
+### Fixes:
+
+* [SVG] `fill="none"` interpretation fix.
+* [DOM] fixes of layout update on state changes.
+* [DOM] scroll-manner(animation: false) fix.
+
+## 6.0.2.22
+
+### New:
+
+* [css] `oklab(...)`. `oklch(...)`, `lab(...)`, `lch(...)` color formats.
+
+### Fixes:
+
+* [drag-n-drop] better feedback image appearance;
+* [osx] drag-n-drop cursor position fix;
+* [css] `flow: xxx;` and `position:relative` children, layout calculation fix;
+* [osx] cpu consumption fix;
+
+## 6.0.2.21
+
+### New:
+
+* bin/windows.xp/x32/ - "raster only" version of the engine - no GPU backend. These binaries can be used on all Windows versions in cases when use of GPU drivers is problematic or not desirable at all. 
+
+### Fixes:
+
+* [DOM, Graphics] `new Graphics.Image(w,h)`, numeric values of `w` and `h` are treated as `px` rather than `ppx`.    
+* [osx] system drag-n-drop support fixes.
+
+## 6.0.2.20
+
+### Fixes:
+
+* [OSX] drag-n-drop. fix of drag icon size.
+* [DOM] popups, fix of mouseenter/mouseleave events generation.
+* [DOM] `element.takeOff()` is not using TOPMOST flag by default.
+* [CSS] `background:url(.svg)` drawing, fix of pixelation.
+
+## 6.0.2.19
+
+### Fixes:
+
+* [osx] fix of hang-up in animated image drawing (GIF,PNG);
+* [osx] fix of AV in window.performDrag();
+* `<input|color>` fix of `colorInput.value="string"` interpretation;
+
+## 6.0.2.18
+
+* `window-alignment="0"` attribute on root document explicitly disables default reposition/sizing of the window;
+* [internal] libjpeg is replaced by libjpeg-turbo;
+* [pager] pdf generator fix;
+* fix of animation freeze if `SciterSetOption(NULL, SCITER_SET_SCRIPT_RUNTIME_FEATURES, ...)` is not set.
+* [DOM] fix of `Event.code` in keyboard events.
+* `<input|integer step="x">` layout fix.
+
+## 6.0.2.17
+
+### Fixes:
+
+* [CSS] fix of SVG handling in background-image: url(x.svg);
+* [dom] fix of cursor appearance on popups;
+* [windows] mouse on popup handling fix;
+* [linux] X11, fix of AV at popup windows showing;
+
+## 6.0.2.16
+
+### Fixes:
+
+* [windows] clipboard HTML format handling fix;
+* [htmlarea] clipboard pasting fix;
+* [osx] fix of potential AV after wake up on multi-head systems;
+* `<input|text>` is not dropping selection on focusout event now;
+* [css] fix of `{ display:inline-block; width:XX% }`;
+* [dom] fix of out-of-the-dom elements in popups;
+* [Graphics.Text] Graphics.Text uses width:XXX, height:YYY CSS properties to set default size (if they defined in .style);
+* [osx] compatibility with OSX versions < 14.0;
+
+## 6.0.2.15
+
+### New:
+
+* `Graphics.Text` is allowed to have borders, paddings (applied by text.style). 
+* `Graphics.Text.borderBox:Rect`, `Graphics.Text.paddingBox:Rect` and `Graphics.Text.contentBox:Rect` properties. 
+* `graphics.draw(Graphics.Text)` draws now not just content but also its borders and background if they defined.
+
+### Fixes:
+
+* [Windows] fix of mouse handling on non-client areas. 
+
+## 6.0.2.14
+
+### Fixes:
+
+* `<input|text>`, caret positioning fix;
+* [windows] `SciterProcND` on `WS_CHILD` window fix;
+* [css] "stretch to fit" fix of width calculation (used in `flow:horizontal-wrap`);
+* `<input|text>` and `<textarea>` CTRL+END fix;
+* [osx] GFX_SKIA_RASTER fix;
+* [reactor] request to set value using @value is ignored when element is in focus;
+
+## 6.0.2.13
+
+### Fixes:
+
+* [win] `SciterProcND` fix regarding `WM_DESTROY` handling;
+* demos.lite/lite-sdl - adjustments;
+
+## 6.0.2.12
+
+### New:
+
+* demos.lite/lite-sdl - SDL3 integration sample;
+
+### Fixes:
+
+* [win] fix of click on `<window-icon role="window-icon" />`;
+* [`<textarea>`] caret navigation fixes;
+* `window.requestAttention()` implementation restored;
+* [linux] fix AV in Sciter.Lite;
+
+## 6.0.2.11
+
+### Fixes:
+
+* [svg] regression fix of `<img src="some.svg">`;
+* `<htmlarea>`, fix of `float: left|right` handling;
+* `<htmlarea>`, fix of white space handling;
+* `<video>` end/pause event generation fix;
+* `PReact` compatibility fixes;
+
+## 6.0.2.10
+
+### Fixes:
+
+* [CSS] regression fix, display:inline element treatment 
+* [internal feature] support of JS call stack in file {currentdir}/js-call-stack.txt. Used in post mortem analysis of crashes.
+* [svg] preventing potential stack overflow on some documents.
+* [runtime] navigate:word-start/navigate:word-end navigation fix;
+* `<textarea>`, `\r\n` handling in `textarea.value = "aaa\r\nbbb"`.
+
+
+## 6.0.2.9
+
+### New:
+
+* sdk/samples.barcode - JsBarcode sample.
+
+### Fixes:
+
+* [JS,module loader] `import ... from "./some/"` gets extended to `import ... from "./some/index.js"`
+* [css] fix of inline updates;
+* [windows] fix of AV in sdk/sciter-webview/demo/test-component-on-popup.htm
+* [webview] fix of posible AV on initial load.
+
+## 6.0.2.8
+
+`behavior:richtext` renamed to `behavior:htmlarea`  to match `<htmlarea>`.
+
+### Fixes:
+
+* [htmlarea] fix of `insert-break` operation;
+* sdk/samples.sciter/editor-htmlarea/htmlarea-basic.htm sample update
+* `<canvas>` jsbarcode.js compatibility; 
+
+## 6.0.2.7
+
+### Fixes:
+
+* [Skia] update to more fresh version (Milestone 136);
+* [css] html:owns-focus on root doc;
+* [css] filter:brightness(N%) fix to match W3C spec;
+* [css] multiline ellipsis divide-by-zero fix when line-height is not defined; 
+* [WebGL] fix of 3D canvas resizing;
+* [DOM] Fix of memleak in `Node.cloneNode()`
+
+## 6.0.2.6-bis
+
+### Fixes:
+
+* [DOM] AV in element.insertBefore()/.insertAfter()
+
+## 6.0.2.6
+
+### New:
+
+* [C-modules] support of dlopen(), dlclose() and dlsym() to load and use dll/so/dylib directly.
+
+  See: sdk/samples.c/cmodule-dlopen.htm|c
+
+### Fixes:
+
+* [osx] window rendering on second monitor;
+* [samples] tray-icon demo fix;
+* [css] fix of transition from height: max-content;
+* [dom] `event focusout` generation on `document` after window lost focus;
+
+## 6.0.2.5
+
+### Fixes:
+
+* [Sciter.Lite] regression fixes;
+* [API] dom handles fixes;
+* [API] sciter::element::append() can be called for disconnected parents;
+
+## 6.0.2.4
+
+### New:
+
+* [JS, storage] support of encrypted storage: `Storage.open(path, readWrite, password);`
+
+  See: sdk/samples.storage/notes.password/ sample. 
+
+### Fixes:
+
+* [css] `@font-face` regression fix;
+* [reactor] `table.patch()` fix;
+
+## 6.0.2.3
+
+* [css] fix of `flow:text; padding-top/bottom; box-sizing: border-box` combination handling;
+* [css] `@font-face` related fixes;   
+* [dom] emojis, support of fonts with PNG glyphs like country flags, etc;
+* [Windows] popup window activation fix;
+
+## 6.0.2.2
+
+### Fixes:
+
+* [css] regression fix of `box-sizing/padding` combination;
+* [css] fix of box-sizing in scrollables;
+* [video] custom video stop/start_streaming() methods fix;
+* [css] fix of memory leak in `@font-face {}`;
+* [lottie] support of embedded images;
+
+## 6.0.2.1
+
+### New:
+
+* [api] added `SciterExec(SCITER_APP_LOOP_ITERATION,0,0)`:
+
+  `SciterExec(SCITER_APP_LOOP_ITERATION,0,0)` is an iteration - a body of `SciterExec(SCITER_APP_LOOP,0,0)` loop:
+  ```c++
+  SciterExec(SCITER_APP_INIT, ...);
+  // SCITER_APP_LOOP:
+  while(SciterExec(SCITER_APP_LOOP_ITERATION,0,0)) {
+    //... do something else here with 60 FPS frequency
+  }
+  
+  SciterExec(SCITER_APP_SHUTDOWN, ...);
+  ```
+
+  `SciterExec(SCITER_APP_LOOP_ITERATION,0,0)` returns _TRUE_ when the loop needs to be continued and _FALSE_ if `SciterExec(SCITER_APP_STOP,0,0)` (application exit is requested);
+
+* [api] added `SciterExec(SCITER_APP_LOOP_HEARTBIT,0,0)`
+
+  `SciterExec(SCITER_APP_LOOP_HEARTBIT,0,0)` is used when application runs its own mesage pump loop. 
+  This function shall be called with ~60 FPS frequency - it checks I/O and timers completions.
+
+  `SciterExec(SCITER_APP_LOOP_HEARTBIT,0,0)` returns _TRUE_ when the loop needs to be continued and _FALSE_ if `SciterExec(SCITER_APP_STOP,0,0)` (application exit is requested);
+
+### Fixes:
+
+* [osx] fix of webview component operation;
+* [dom] fix of updates inside <table>, [see](https://sciter.com/forums/topic/table-thead-size-failed-to-update/);
+* [vlist] regression fix;
+* [html-window] window-min-width/height and window-max-width/height handling fix.
+* [dom] _mouseenter_ event generation fix;
+* [css] inline baseline fix;
+* [css] fix of content-vertical/horizontal-align;
+
+## 6.0.2.0
+
+### Fixes:
+
+* rendering tree update refactoring, simplification and fixes;
+* [win] WM_CLOSE message in SciterProcND;
+* [dom] Fix of _mouseidle_ event generation; fix of tooltip functionality; 
+* [api] `SciterCreateElement()` / `sciter::dom::element::create()` - fix of handle leakage;
+
+## 6.0.1.11
+
+### Fixes:
+
+* `<select|dropdown>` extra "change" event fix;
+* per document async operation isolation;
+* [css] `cursor:xxx;` handling on popups;
+* `Zip.toFile(...,password)` - creation of password protected zip files;
+* fix of `<input|calendar firstdayofweek="..." />`
+* [css] `<input|date />` .today fix, see: https://sciter.com/forums/topic/calendar-widget-today-class-error/;
+* `<textarea>` fix of LF handling;
+* PReact support and samples fixes;
+* [css] fix of `box-sizing:border-box;` handling in flow:text elements, [see](https://sciter.com/forums/topic/when-using-brder-box-padding-padding-top-does-not-work-as-expected/) 
+
+## 6.0.1.10
+
+### New:
+
+* [@sciter] `sciter.encrypt()` / `decrypt()` functions to encrypt/decrypt data using Blowfish cipher.
+* `Event.cursorPos() : [x,y]` - reports current cursor location.
+* `Event.keyState(keyName) : bool` - reports current key state on keyboard.
+
+### Fixes:
+
+* Fix of AV on flow:text elements, [report](https://sciter.com/forums/topic/crash-on-mouse-click-in-specific-conditions/);
+* [API] `KEYBOARD_STATES` enum fix;
+* [Lite] demo fixes (keyboard handling);
+* [windows] Windows XP support is back;
+
+## 6.0.1.9
+
+### Fixes:
+
+* `select.on("change")` fix;
+* [d2d] window sizing fix;
+* [css] `max-height: max-content; box-sizing: border-box;` combination fix.
+* [css] fix of `baseline-shift` and `<sub>/<sup>` handling;
+* [osx] Fix of AV while `[NSApp terminate]`.
+
+## 6.0.1.8
+
+### New:
+
+* [css] minimalistic support of `display:flex;`emulated by flow:horizontal | horizontal-wrap | vertical | vertical-wrap: 
+  * `display:flex;`
+  * `flex: <number>` 
+  * `flex-direction: row | column`
+  * `flex-wrap: nowrap | wrap`
+  * `flex-flow: <flex-direction> <flex-wrap>`
+    see samples.css/css-w3-flex/
+
+* [API] `SCN_DATA_LOADED::requestId` field added;
+* [API] `SciterResourceType::RT_DATA_MEDIA` - audio, lottie, video (potentially).
+* [Request API] + `RequestGetRequestor()` - reports requestor element or document.
+
+### Fixes:
+
+* `<select>`, fix of `<option selected>` handling;
+* fix of touchpad events on popups;
+* scroll-indicator hide-on-leave fixes;
+* [css] display:grid/auto-fill fix.
+
+
+
+## 6.0.1.7
+
+### New:
+
+* [css] minimalistic support of `display:flex;`emulated by flow:horizontal | horizontal-wrap | vertical | vertical-wrap: 
+  * `display:flex;`
+  * `flex: <number>` 
+  * `flex-direction: row | column`
+  * `flex-wrap: nowrap | wrap`
+  * `flex-flow: <flex-direction> <flex-wrap>`
+    see samples.css/css-w3-flex/
+
+* [API] `SCN_DATA_LOADED::requestId` field added;
+* [API] `SciterResourceType::RT_DATA_MEDIA` - audio, lottie, video (potentially).
+* [Request API] + `RequestGetRequestor()` - reports requestor element or document.
+
+### Fixes:
+
+* `<select>`, fix of `<option selected>` handling;
+* fix of touchpad events on popups;
+* scroll-indicator hide-on-leave fixes;
+* [css] display:grid/auto-fill fix.
+
+
+### New:
+
+* [css] support of `display:grid;`;
+
+### Fixes:
+
+* [css] fix of `<span>` styling in anonymous paragraphs;
+* [win] a11y events implementation;
+* [win-d2d] fix of keyboard navigation in `<input|text>` and `<textarea>`;
+
+## 6.0.1.6
+
+### Fixes:
+
+* [osx] restoring Skia/Metal direct backend. Use `SciterSetOption(NULL, SCITER_SET_GFX_LAYER, GFX_LAYER_SKIA_METAL);` to use that backend. Skia/Metal direct backend improves performance a bit but disables WebGL support;
+* [osx] animations handling optimization;
+* `document.createElement()` fixes;
+
+## 6.0.1.5
+
+* [osx] less CPU intensive idle processing; 
+* Sciter.Lite, fix of SCITER_X_MSG_RESOLUTION handling;
+* [osx] raster backend implementation;
+* preact compatibility;
+* browser compatibility fix: `fetch()` does not throw error on http 100...599 error codes.
+* fix of AV in IME input;
+* fix of tooltip creation; 
+* windows/d2d transparent tooltips fix;
+
+## 6.0.1.4
+
+### Fixes:
+
+* Fix of box-sizing: border-box + padding;
+* `<textarea>` fix of mouse down after last position;
+* [Windows] fix of `element.takeOff()` window taskbar appearance;
+* Fix of `Window.this.state = Window.WINDOW_FULL_SCREEN;`
+* `<input!number>` fixes;
+* `<input!text>` `<input!number>` - removing selection on focus out;
+* fix of `vertical-align: baseline;` in text flows;
+* `Intl` fixes: https://sciter.com/forums/topic/intl-datetimeformat-monthview/
+* [css] various layout fixes;
+
+### New:
+
+* `SciterExec(SCITER_APP_RUN_PULSE_CALLBACK,cb,cbTag);` - pulse callback in UI thread.
+
+## 6.0.1.3
+
+### Fixes:
+
+* Fix of https://sciter.com/forums/topic/plaintext-padding-incorrect/
+* `window.statechange` event when visibility changes.
+* Fix of headers handling in internal http client. 
+* Fix of debug-peer.js inside sandboxed document.
+* [dom] fix of `document.createElement("frame" | "iframe")`.
+* [vlist] regression fixes.
+* [css] content-vertical|horizontal-align fixes.
+* Attributes `DateTimeFormat.monthView( {dayOfWeekFormat,monthFormat} )` that accept `"short"` | `"medium"` | `"long"`.
+* zlib update to version 1.3.1;
+* pnglib update to version 1.6.47; 
+* [css] fix of `border-collapse: collapse;` handling.
+
+## 6.0.1.2
+
+### Fixes:
+
+* PAGE_DOWN/PAGE_UP/DOWN/UP keys handling fixes in text editors;
+* `<button|radio checked>`  rendering;
+* fix of window creation by JSX;
+* sdk/samples.sciter/tray-icon/ sample refactoring;
+* popup window appearance refactoring;
+* [lite] fixes;
+
+Enabling OpenGL-only backend in internal builds (reduces size).
+
+## 6.0.1.1
+
+### New:
+
+* sdk/samples.c/c-resources.htm - headers used in cmodules;
+* `SciterSetOption(NULL, SCITER_SET_ROOT_CA, "...")` allows to set root certificate authorities for internal HTTP client;
+
+### Fixes:
+
+* internal http client: rises error 495 on invalid certificate;
+* scapp.exe, "run.js" fixes;
+* `document.createElement()`, resolves initial styles and controllers;
+* `Graphics.drawImage( Image | <img>)` - allows to draw as Graphics.Image as images associated with `<img>`;
+
 ## 6.0.1.0
 
 ### New:

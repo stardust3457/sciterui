@@ -24,7 +24,8 @@ int uimain(std::function<int()> run ) {
                           ALLOW_FILE_IO |
                           ALLOW_SOCKET_IO |
                           ALLOW_EVAL |
-                          ALLOW_SYSINFO );
+                          ALLOW_SYSINFO |
+                          ALLOW_CMODULES );
 
 #ifdef _DEBUG
   sciter::debug_output_console console; //- uncomment it if you will need console window

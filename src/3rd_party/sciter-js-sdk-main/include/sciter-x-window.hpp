@@ -53,8 +53,10 @@ namespace sciter
     inline void start() { SciterExec(SCITER_APP_INIT, 0, 0); }
     inline void start(int argc, const WCHAR* argv[]) { SciterExec(SCITER_APP_INIT, UINT_PTR(argc), UINT_PTR(argv)); }
     inline int  run() { return (int)SciterExec(SCITER_APP_LOOP, 0, 0); }
-    inline bool request_quit(int rv) { return SciterExec(SCITER_APP_STOP, 0, 0) == 0; }
+    inline bool request_quit(int rv) { return SciterExec(SCITER_APP_STOP, rv, 0) == 0; }
     inline void shutdown() { SciterExec(SCITER_APP_SHUTDOWN, 0, 0); }
+    inline bool run_iteration() { return (bool)SciterExec(SCITER_APP_LOOP_ITERATION, 0, 0); }
+    inline bool run_heartbit() { return (bool)SciterExec(SCITER_APP_LOOP_HEARTBIT, 0, 0); }
   }
 
   class window : public sciter::event_handler
@@ -76,8 +78,8 @@ namespace sciter
 
     bool is_valid() const { return _hwnd != 0; }
 
-    virtual long asset_add_ref() { return asset::asset_add_ref(); }
-    virtual long asset_release() { return asset::asset_release(); }
+    virtual long asset_add_ref() override { return asset::asset_add_ref(); }
+    virtual long asset_release() override { return asset::asset_release(); }
 
     void collapse() { bind(); ::SciterWindowExec(_hwnd,SCITER_WINDOW_SET_STATE, SCITER_WINDOW_STATE_MINIMIZED,0); }
     void expand( bool maximize = false) { bind(); ::SciterWindowExec(_hwnd,SCITER_WINDOW_SET_STATE, maximize ? SCITER_WINDOW_STATE_MAXIMIZED: SCITER_WINDOW_STATE_SHOWN,0); }
@@ -129,7 +131,7 @@ namespace sciter
     }
 
   protected:
-    virtual LRESULT on_engine_destroyed()
+    virtual LRESULT on_engine_destroyed() override 
     {
       _hwnd = 0; asset_release();
       return 0;

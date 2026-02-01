@@ -48,12 +48,9 @@ BOOL CSciterChildView::PreCreateWindow(CREATESTRUCT& cs)
 // Sciter "mix-in" type of integration, see: http://sciter.com/developers/embedding-principles/
 LRESULT CSciterChildView::WindowProc(UINT message,WPARAM wParam,LPARAM lParam)
 {
-  LRESULT lResult;
   BOOL    bHandled;
 
-  lResult = SciterProcND( this->GetSafeHwnd(), message,wParam,lParam, &bHandled);
-  if(bHandled)      // if it was handled by the Sciter
-    return lResult; // then no further processing is required.
+  SciterProcND( this->GetSafeHwnd(), message,wParam,lParam, &bHandled);
 
   return __super::WindowProc(message,wParam,lParam);
 }

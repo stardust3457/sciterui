@@ -78,6 +78,10 @@ namespace sciter
 
 		virtual bool handle_focus(HELEMENT he, FOCUS_PARAMS& params) override
 		{ 
+			if (nullptr == this_webview)
+			{
+				return false;
+			}
 			switch (params.cmd) {
 				case FOCUS_ADVANCE_REQUEST:
 					this_webview->advance_focus(params.cause == FOCUS_RQ_NEXT);

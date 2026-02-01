@@ -1,0 +1,16 @@
+<html>
+<head>
+	<title></title>
+	<script src="JsBarcode.all.js"></script>
+	<script>
+		function repeat5(){
+			JsBarcode("#barcode5", Math.floor(1000000+Math.random()*9000000)+"",{displayValue:true,fontSize:20});
+		};
+		setInterval(repeat5,500);
+		repeat5();
+	</script>
+</head>
+<body>
+	<canvas id="barcode5" width="100" height="100"></canvas>
+</body>
+</html>

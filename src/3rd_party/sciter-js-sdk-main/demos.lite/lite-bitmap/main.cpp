@@ -167,11 +167,11 @@ static LRESULT CALLBACK windowCallback (HWND hWnd, UINT message, WPARAM wParam, 
 
           unsigned ks = 0;
           if (wParam & MK_SHIFT)
-            ks |= KEYBOARD_STATES::SHIFT_KEY_PRESSED;
+            ks |= KEYBOARD_STATES::KEYBOARD_STATE_LSHIFT;
           if (wParam & MK_CONTROL)
-            ks |= KEYBOARD_STATES::CONTROL_KEY_PRESSED;
+            ks |= KEYBOARD_STATES::KEYBOARD_STATE_LCONTROL;
           if (wParam & MK_ALT)
-            ks |= KEYBOARD_STATES::ALT_KEY_PRESSED;
+            ks |= KEYBOARD_STATES::KEYBOARD_STATE_LALT;
 
 
           MOUSE_EVENTS evt = MOUSE_EVENTS::MOUSE_MOVE;

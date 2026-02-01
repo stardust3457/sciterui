@@ -69,7 +69,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
+    wcex.style          = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
     wcex.lpfnWndProc    = WndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
@@ -127,6 +127,22 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+void test(HWND hWnd) {
+
+  sciter::dom::element root = sciter::dom::element::root_element(hWnd);
+  sciter::dom::element tbody = root.find_first("tbody");
+
+  for (int i = 0; i < 20000; i++)
+  {
+    sciter::dom::element row = sciter::dom::element::create("tr");
+    WCHAR buffer[64] = {0};
+    wsprintf(buffer, L"cell %d", i);
+    sciter::dom::element cell = sciter::dom::element::create("td",buffer);
+    row.append(cell);
+    tbody.append(row);
+  }
+}
+
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -149,7 +165,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
             case IDM_ABOUT:
                 {
-                  SciterCall(hWnd, "about", 0, NULL, NULL);
+                  //SciterCall(hWnd, "about", 0, NULL, NULL);
+                  test(hWnd);
                 }
                 break;
             case IDM_EXIT:
@@ -160,6 +177,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+
+        case WM_LBUTTONDBLCLK:
+        {
+          sciter::dom::element root = sciter::dom::element::root_element(hWnd);
+          _ASSERTE(root);
+        }
+        break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         // fall through, SciterProcND also needs WM_DESTROY

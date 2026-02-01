@@ -476,7 +476,7 @@ namespace dom
     }
 
   /**Get last sibling element.
-    * \return \b #HELEMENT, handle of last sibling element if it exists or 0 otherwise
+    * \return \b #HELEMENT, of last sibling element if it exists or 0 otherwise
     **/
     HELEMENT last_sibling() const
     {

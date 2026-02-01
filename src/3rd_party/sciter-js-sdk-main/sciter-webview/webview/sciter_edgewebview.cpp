@@ -388,7 +388,7 @@ namespace webview
 
         ShowWindow(SW_SHOW);
         UpdateWindow();
-        SetFocus();
+        //SetFocus();
         return 0;
     }
 

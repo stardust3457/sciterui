@@ -4,12 +4,14 @@
 
 class frame : public sciter::window {
 public:
-  frame() : window(SW_MAIN /*| SW_ENABLE_DEBUG*/) {}
+  frame() : window(SW_MAIN /*| SW_ENABLE_DEBUG*/ /*, RECT({20,20,820,620})*/) {}
 };
 
 int uimain(std::function<int()> run) {
 
   sciter::debug_output_console _;
+    
+  //SciterSetOption(NULL, SCITER_SET_GFX_LAYER, GFX_LAYER_SKIA_RASTER);
 
   SciterSetOption(NULL, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
     ALLOW_FILE_IO |

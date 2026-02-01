@@ -27,7 +27,8 @@ class YearView extends Element {
        today:this.today, 
        showMonth:true,
        showWeekDays:true,
-       dayOfWeekLength:2, // day abbr length
+       dayOfWeekFormat:"medium", // day abbr length
+       monthFormat:"long", // month abbr length
        // custom classes for some days
        dayClass: (day,month,year) => day == 1 ? ".som":"",
     }

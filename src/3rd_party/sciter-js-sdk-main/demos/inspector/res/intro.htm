@@ -60,5 +60,13 @@
         }
       }
     </pre>
+NOTE: In order your app to connect with the inspector file and socket I/O need to be enabled in application's main functin: 
+    <pre>
+      SciterSetOption(NULL, SCITER_SET_SCRIPT_RUNTIME_FEATURES,
+        ALLOW_FILE_IO |
+        ALLOW_SOCKET_IO |
+        ALLOW_EVAL |
+        ALLOW_SYSINFO);    
+    </pre>
   </body>
 </html>

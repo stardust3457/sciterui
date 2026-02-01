@@ -1,4 +1,6 @@
-<html>
+<html window-icon="window-icon.svg"
+      window-width"800px"
+      window-height"600px">
     <head>
         <title>Test</title>
         <style>
@@ -6,7 +8,7 @@
 button { display:block; margin:1em; }
 
         </style>
-        <script>
+        <script|module>
 
 
 document.on("click","button#info", function() 
@@ -44,7 +46,7 @@ document.on("click","button#buttons", function()
 document.on("click","button#prompt", function() 
 {
   var r = Window.this.modal(
-    <question>
+    <dialog|question width="480px" alignment="-8">
       <content>
         <form>
           <text>What is your name?</text>
@@ -55,10 +57,9 @@ document.on("click","button#prompt", function()
          <button id="ok" role="default-button">Ok</button>
          <button id="no" role="cancel-button">Don't know</button>
       </buttons>
-    </question>);
+    </dialog>);
   console.log(r);
 });
-
 
 document.on("click","button#styling", function() 
 {

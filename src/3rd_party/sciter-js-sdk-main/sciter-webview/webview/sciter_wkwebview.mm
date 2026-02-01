@@ -177,8 +177,8 @@ namespace webview
 
 sciter_wkwebview::sciter_wkwebview(bool debug /*= false*/, void *parent /*= nullptr*/) {
     m_debugtools = debug;
-    
-    NSView* nsParentView = (__bridge NSView*)parent;
+    NSWindow* nsParentWindow = (__bridge NSWindow*)parent;
+    NSView* nsParentView = [nsParentWindow contentView];
     NSView* containerView = [[NSView alloc] initWithFrame:nsParentView.bounds];
     [nsParentView addSubview: containerView];
     m_containerView = (__bridge void*)containerView;

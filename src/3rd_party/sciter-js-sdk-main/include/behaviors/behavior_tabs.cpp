@@ -97,9 +97,9 @@ SAMPLE:
 
       switch (code)
       {
-      case VK_TAB: if (keyboardStates & CONTROL_KEY_PRESSED)
+      case VK_TAB: if (keyboardStates & KEYBOARD_STATE_CONTROL)
         return select_tab(tabs_el, tab_el,
-          keyboardStates & SHIFT_KEY_PRESSED ? -1 : 1);
+          keyboardStates & KEYBOARD_STATE_SHIFT ? -1 : 1);
         break;
       case VK_LEFT: return is_in_focus(tab_el) ? select_tab(tabs_el, tab_el, -1) : FALSE;
       case VK_RIGHT: return is_in_focus(tab_el) ? select_tab(tabs_el, tab_el, 1) : FALSE;
