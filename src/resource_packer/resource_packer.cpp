@@ -4,6 +4,7 @@
 #include <map>
 #include <sciterui/file.h>
 #include <sciterui/path.h>
+#include <sciterui/path_finder.h>
 #include <sciterui/std_string.h>
 
 using namespace SciterUI;
@@ -33,14 +34,15 @@ bool ProcessDir(const Path & targetFile, const Path & sourceDir, const char * su
         return false;
     }
 
-    Path targetDir(sourceDir, "*.*");
-    targetDir.AppendDirectory(subdir);
+    Path targetSearchSpec(sourceDir, "*.*"), findTarget;
+    targetSearchSpec.AppendDirectory(subdir);
     uint32_t itemCount = 0;
-    if (targetDir.FindFirst())
+    PathFinder targetFinder(targetSearchSpec);
+    if (targetFinder.FindFirst(findTarget))
     {
         do
         {
-            RESOURCE_MAP::const_iterator iter = ResourceMap.find(stdstr(targetDir.GetExtension()).ToUpper().c_str());
+            RESOURCE_MAP::const_iterator iter = ResourceMap.find(stdstr(findTarget.GetExtension()).ToUpper().c_str());
             if (iter == ResourceMap.end())
             {
                 continue;
@@ -66,14 +68,14 @@ bool ProcessDir(const Path & targetFile, const Path & sourceDir, const char * su
             File fileData;
             if (verbose)
             {
-                std::cout << "Processing " << (((ULONG_PTR)strType) <= 0xFFFF ? stdstr_f("%d", (WORD)(ULONG_PTR)strType).c_str() : stdstr().FromUTF16(strType).c_str()) << " - " << targetDir.GetNameExtension().c_str() << std::endl;
+                std::cout << "Processing " << (((ULONG_PTR)strType) <= 0xFFFF ? stdstr_f("%d", (WORD)(ULONG_PTR)strType).c_str() : stdstr().FromUTF16(strType).c_str()) << " - " << findTarget.GetNameExtension().c_str() << std::endl;
             }
-            if (fileData.Open(targetDir, File::modeRead))
+            if (fileData.Open(findTarget, File::modeRead))
             {
                 uint32_t dataSize = fileData.GetLength();
                 std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
                 fileData.Read(data.get(), dataSize);
-                if (!::UpdateResource(update, strType, stdstr(targetDir.GetNameExtension()).ToUpper().ToUTF16().c_str(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPVOID)data.get(), dataSize))
+                if (!::UpdateResource(update, strType, stdstr(findTarget.GetNameExtension()).ToUpper().ToUTF16().c_str(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPVOID)data.get(), dataSize))
                 {
                     std::cout << "Error: Failed to UpdateResource on \"" << targetFile << "\"" << std::endl;
                     targetFile.FileDelete();
@@ -82,11 +84,11 @@ bool ProcessDir(const Path & targetFile, const Path & sourceDir, const char * su
             }
             else
             {
-                std::cout << "Error: Failed to open \"" << targetDir << "\"" << std::endl;
+                std::cout << "Error: Failed to open \"" << findTarget << "\"" << std::endl;
                 targetFile.FileDelete();
                 return false;
             }
-        } while (targetDir.FindNext());
+        } while (targetFinder.FindNext(findTarget));
     }
     ::EndUpdateResource(update, FALSE);
     return true;

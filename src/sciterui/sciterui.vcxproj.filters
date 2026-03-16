@@ -81,6 +81,9 @@
     <ClCompile Include="widgets\list_box.cpp">
       <Filter>Source Files\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="path_finder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sciter.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\widgets\list_box.h">
       <Filter>include\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="path_finder.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

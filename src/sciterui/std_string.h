@@ -24,7 +24,7 @@ public:
     stdstr(const char * str);
 
     strvector Tokenize(char delimiter) const;
-    stdstr & ToUpper(void);
+    stdstr & ToUpper();
 
     stdstr & Replace(const char search, const char replace);
     stdstr & Replace(const char * search, const char replace);

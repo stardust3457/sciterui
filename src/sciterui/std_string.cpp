@@ -44,7 +44,7 @@ strvector stdstr::Tokenize(char delimiter) const
     return tokens;
 }
 
-stdstr & stdstr::ToUpper(void)
+stdstr & stdstr::ToUpper()
 {
     std::transform(begin(), end(), begin(), (char (*)(int))toupper);
     return *this;

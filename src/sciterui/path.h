@@ -12,13 +12,6 @@ public:
         MODULE_DIRECTORY = 2
     };
 
-    enum
-    {
-        FIND_ATTRIBUTE_ALLFILES = 0xFFFF, // Search include all files
-        FIND_ATTRIBUTE_FILES = 0x0000,    // File can be read or written to without restriction
-        FIND_ATTRIBUTE_SUBDIR = 0x0010,   // Subdirectories
-    };
-
     Path();
     Path(const char * path);
     Path(const char * path, const char * fileName);
@@ -55,25 +48,17 @@ public:
     Path & DirectoryNormalize(Path baseDir);
     void DirectoryUp(std::string * lastDir = nullptr);
 
-    bool FindFirst(uint32_t attributes = 0);
-    bool FindNext();
-
 private:
     void SetToModuleDirectory();
 
-    bool AttributesMatch(uint32_t targetAttributes, uint32_t fileAttributes);
-    void CloseFindHandle();
-
     void CleanPath(std::string & path) const;
-    void EnsureLeadingBackslash(std::string & directory) const;
-    void EnsureTrailingBackslash(std::string & directory) const;
-    void StripLeadingBackslash(std::string & path) const;
-    void StripTrailingBackslash(std::string & rDirectory) const;
+    void EnsureLeadingSeparator(std::string & directory) const;
+    void EnsureTrailingSeparator(std::string & directory) const;
+    void StripLeadingSeparator(std::string & path) const;
+    void StripTrailingSeparator(std::string & rDirectory) const;
 
-    void * m_findHandle = nullptr;
     static void * m_hInst;
     std::string m_path;
-    uint32_t m_findAttributes = 0;
 };
 
 } // namespace SciterUI
