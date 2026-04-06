@@ -1,11 +1,15 @@
 #include "std_string.h"
 #include <map>
 #include <memory>
+#include <string>
 #include <sciter_element.h>
 #include <sciter_handler.h>
 #include <sciter_ui.h>
 #include <set>
 #include <widgets/menubar.h>
+
+#include <value.h>
+#include <sciter-x-behavior.h>
 
 class WidgetMenuBar :
     public std::enable_shared_from_this<WidgetMenuBar>,
@@ -57,16 +61,82 @@ private:
 
 WidgetMenuBar::MenuBars WidgetMenuBar::m_instances;
 
-MenuBarItem::MenuBarItem(int32_t id, const char * title, MenuBarItemList * subMenu)
+static std::string MenuBarAcceleratorKeyLabel(uint32_t key)
 {
-    Reset(id, title, subMenu);
+    if (key >= (uint32_t)SCITER_KEY_A && key <= (uint32_t)SCITER_KEY_Z)
+    {
+        char buf[2] = { (char)('A' + (key - (uint32_t)SCITER_KEY_A)), '\0' };
+        return std::string(buf);
+    }
+    if (key >= (uint32_t)SCITER_KEY_0 && key <= (uint32_t)SCITER_KEY_9)
+    {
+        char buf[2] = { (char)('0' + (key - (uint32_t)SCITER_KEY_0)), '\0' };
+        return std::string(buf);
+    }
+    if (key >= (uint32_t)SCITER_KEY_F1 && key <= (uint32_t)SCITER_KEY_F12)
+    {
+        return SciterUI::stdstr_f("F%u", (unsigned)(1u + (key - (uint32_t)SCITER_KEY_F1)));
+    }
+    if (key == (uint32_t)SCITER_KEY_ESCAPE)
+    {
+        return "Esc";
+    }
+    if (key == (uint32_t)SCITER_KEY_ENTER)
+    {
+        return "Enter";
+    }
+    if (key == (uint32_t)SCITER_KEY_TAB)
+    {
+        return "Tab";
+    }
+    if (key == (uint32_t)SCITER_KEY_SPACE)
+    {
+        return "Space";
+    }
+    return SciterUI::stdstr_f("%u", (unsigned)key);
 }
 
-void MenuBarItem::Reset(int32_t id, const char * title, MenuBarItemList * subMenu)
+std::string MenuBarAccelerator::Format() const
+{
+    if (IsNone())
+    {
+        return std::string();
+    }
+    std::string s;
+    if (ctrl)
+    {
+        s += "Ctrl+";
+    }
+    if (shift)
+    {
+        s += "Shift+";
+    }
+    if (alt)
+    {
+        s += "Alt+";
+    }
+    s += MenuBarAcceleratorKeyLabel(key);
+    return s;
+}
+
+MenuBarItem::MenuBarItem(int32_t id, const char * title, MenuBarItemList * subMenu, const MenuBarAccelerator * shortcutAccel)
+{
+    Reset(id, title, subMenu, shortcutAccel);
+}
+
+void MenuBarItem::Reset(int32_t id, const char * title, MenuBarItemList * subMenu, const MenuBarAccelerator * shortcutAccel)
 {
     m_id = id;
     m_title = title;
     m_subMenu = subMenu;
+    if (shortcutAccel != nullptr)
+    {
+        m_shortcutAccel = *shortcutAccel;
+    }
+    else
+    {
+        m_shortcutAccel = {};
+    }
 }
 
 int MenuBarItem::ID() const
@@ -82,6 +152,11 @@ const char * MenuBarItem::Title() const
 const MenuBarItemList * MenuBarItem::SubMenu() const
 {
     return m_subMenu;
+}
+
+const MenuBarAccelerator & MenuBarItem::ShortcutAccel() const
+{
+    return m_shortcutAccel;
 }
 
 void WidgetMenuBar::Register(ISciterUI & sciterUI)
@@ -205,7 +280,7 @@ std::string WidgetMenuBar::MenuItemHtml(const MenuBarItem & item, uint32_t inden
     }
     else
     {
-        title = SciterUI::stdstr_f("<li data-menu_id=\"%d\">%s", item.ID(), title.c_str());
+        title = SciterUI::stdstr_f("<li data-menu_id=\"%d\"><span class='menu-item-label'>%s</span><span class='menu-accelerator'>%s</span>", item.ID(), title.c_str(), item.ShortcutAccel().Format().c_str());
     }
     return SciterUI::stdstr_f("%*s%s%s</li>\n", indent, "", title.c_str(), submenu.c_str());
 }
