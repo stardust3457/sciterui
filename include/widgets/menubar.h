@@ -7,6 +7,17 @@
 class MenuBarItem;
 typedef std::list<MenuBarItem> MenuBarItemList;
 
+struct MenuBarAccelerator
+{
+    uint32_t key = 0;
+    bool ctrl = false;
+    bool alt = false;
+    bool shift = false;
+
+    bool IsNone() const { return key == 0; }
+    std::string Format() const;
+};
+
 class MenuBarItem
 {
 public:
@@ -17,12 +28,13 @@ public:
         NO_ID = -3
     };
 
-    MenuBarItem(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr);
-    void Reset(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr);
+    MenuBarItem(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr, const MenuBarAccelerator * shortcutAccel = nullptr);
+    void Reset(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr, const MenuBarAccelerator * shortcutAccel = nullptr);
 
     int ID() const;
     const char * Title() const;
     const MenuBarItemList * SubMenu() const;
+    const MenuBarAccelerator & ShortcutAccel() const;
 
 private:
     MenuBarItem(void) = delete;
@@ -31,6 +43,7 @@ private:
     int32_t m_id;
     std::string m_title;
     MenuBarItemList * m_subMenu;
+    MenuBarAccelerator m_shortcutAccel;
 };
 
 __interface IMenuBarSink
