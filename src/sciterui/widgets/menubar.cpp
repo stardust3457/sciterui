@@ -10,6 +10,7 @@
 
 #include <value.h>
 #include <sciter-x-behavior.h>
+#include <sciter-x-api.h>
 
 class WidgetMenuBar :
     public std::enable_shared_from_this<WidgetMenuBar>,
