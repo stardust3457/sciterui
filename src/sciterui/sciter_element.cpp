@@ -356,6 +356,14 @@ void SciterElement::PostEvent(uint32_t event_code, uint64_t reason, SCITER_ELEME
     assert(r == SCDOM_OK); (void)r;
 }
 
+bool SciterElement::SendEvent(uint32_t event_code, uint64_t reason, SCITER_ELEMENT heSource) const
+{
+    SBOOL handled = FALSE;
+    SCDOM_RESULT r = SciterSendEvent((HELEMENT)m_he, event_code, heSource ? (HELEMENT)heSource : (HELEMENT)m_he, reason, &handled);
+    assert(r == SCDOM_OK); (void)r;
+    return handled != FALSE;
+}
+
 void SciterElement::SelectElements(ISciterElementCallback * pcall, const char * selectors) const
 {
     SciterSelectElements((HELEMENT)m_he, selectors, callback_func, pcall);

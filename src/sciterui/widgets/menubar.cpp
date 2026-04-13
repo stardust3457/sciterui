@@ -16,6 +16,8 @@ class WidgetMenuBar :
     public IWidget,
     public IMenuBar,
     public IClickSink,
+    public IKeySink,
+    public IEventSink,
     public ISciterElementCallback
 {
     typedef std::map<IWidget *, std::shared_ptr<WidgetMenuBar>> MenuBars;
@@ -47,6 +49,19 @@ private:
     // IClickSink
     bool OnClick(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t reason);
 
+    // IKeySink
+    bool OnKeyDown(SCITER_ELEMENT element, SCITER_ELEMENT item, SciterKeys keyCode, uint32_t keyboardState) override;
+    bool OnKeyUp(SCITER_ELEMENT element, SCITER_ELEMENT item, SciterKeys keyCode, uint32_t keyboardState) override;
+    bool OnKeyChar(SCITER_ELEMENT element, SCITER_ELEMENT item, SciterKeys keyCode, uint32_t keyboardState) override;
+    void SyncMenuMnemonicsAttribute();
+
+    // IEventSink
+    bool OnEvent(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t event_code, uint64_t reason) override;
+
+    void HideShownMenuPopup() const;
+    void NotifySinksMenuItem(int32_t id, SCITER_ELEMENT item) const;
+    static bool ElementIsUnderMainMenuWidget(const SciterElement & hit, const SciterElement & mainMenuElem);
+
     static std::string MenuItemHtml(const MenuBarItem & item, uint32_t indent);
     static IWidget * __stdcall CreateWidget(ISciterUI & sciterUI);
     static void __stdcall ReleaseWidget(IWidget * widget);
@@ -56,10 +71,67 @@ private:
     ISciterUI & m_sciterUI;
     IBaseElement * m_baseElement;
     SciterElement m_menuBarElem;
+    SciterElement m_keySinkRoot;
     IMenuBarSinkSet m_sinks;
+    bool m_leftAltDown;
+    bool m_rightAltDown;
 };
 
 WidgetMenuBar::MenuBars WidgetMenuBar::m_instances;
+
+static const uint32_t kMenuItemClickEvent = (uint32_t)MENU_ITEM_CLICK;
+static const uint64_t kClickReasonByKey = (uint64_t)BY_KEY_CLICK;
+
+static std::string PrepareMenuTitleForMnemonics(const char * title)
+{
+    SciterUI::stdstr t(title ? title : "");
+    t.Replace("...", "\xE2\x80\xA6");
+    return std::string(t.c_str());
+}
+
+static void AppendMenuTitleHtml(const std::string & in, std::string & out, char & accesskey)
+{
+    accesskey = 0;
+    for (size_t i = 0; i < in.size(); )
+    {
+        const unsigned char c = (unsigned char)in[i];
+        if (c == '&' && i + 1 < in.size())
+        {
+            const unsigned char n = (unsigned char)in[i + 1];
+            if (n == '&')
+            {
+                out += '&';
+                i += 2;
+                continue;
+            }
+            if (!accesskey && std::isalnum(n))
+            {
+                accesskey = (char)std::toupper(n);
+                out += "<u>";
+                out += (char)n;
+                out += "</u>";
+                i += 2;
+                continue;
+            }
+            out += "&amp;";
+            i += 1;
+            continue;
+        }
+        if (c == '<')
+        {
+            out += "&lt;";
+        }
+        else if (c == '>')
+        {
+            out += "&gt;";
+        }
+        else
+        {
+            out += (char)c;
+        }
+        i += 1;
+    }
+}
 
 static std::string MenuBarAcceleratorKeyLabel(uint32_t key)
 {
@@ -199,11 +271,36 @@ void WidgetMenuBar::Attached(SCITER_ELEMENT element, IBaseElement * baseElement)
 {
     m_baseElement = baseElement;
     m_menuBarElem = element;
+    m_keySinkRoot = SciterElement();
+    HWINDOW hwnd = (HWINDOW)m_menuBarElem.GetElementHwnd(true);
+    if (hwnd != nullptr)
+    {
+        HELEMENT hRoot = 0;
+        if (SciterGetRootElement((HWND)hwnd, &hRoot) == SCDOM_OK && hRoot != 0)
+        {
+            m_keySinkRoot = SciterElement(hRoot);
+        }
+    }
+    if (!m_keySinkRoot.IsValid())
+    {
+        m_keySinkRoot = m_menuBarElem.GetRoot();
+    }
+    if (m_keySinkRoot.IsValid())
+    {
+        m_sciterUI.AttachHandler(m_keySinkRoot, IID_IKEYSINK, (IKeySink *)this);
+        m_sciterUI.AttachHandler(m_keySinkRoot, IID_EVENTSINK, (IEventSink *)this);
+    }
     m_sciterUI.AttachHandler(m_menuBarElem, IID_ICLICKSINK, (IClickSink*)this);
 }
 
 void WidgetMenuBar::Detached(SCITER_ELEMENT /*element*/)
 {
+    if (m_keySinkRoot.IsValid())
+    {
+        m_sciterUI.DetachHandler(m_keySinkRoot, IID_EVENTSINK, (IEventSink *)this);
+        m_sciterUI.DetachHandler(m_keySinkRoot, IID_IKEYSINK, (IKeySink *)this);
+        m_keySinkRoot = nullptr;
+    }
     m_sciterUI.DetachHandler(m_menuBarElem, IID_ICLICKSINK, (IClickSink*)this);
     m_baseElement = nullptr;
     m_menuBarElem = nullptr;
@@ -228,6 +325,147 @@ bool WidgetMenuBar::OnSciterElement(SCITER_ELEMENT he)
     return false;
 }
 
+void WidgetMenuBar::SyncMenuMnemonicsAttribute()
+{
+    const bool on = m_leftAltDown || m_rightAltDown;
+    if (m_keySinkRoot.IsValid())
+    {
+        if (on)
+        {
+            m_keySinkRoot.SetAttribute("data-menu-mnemonics", "1");
+        }
+        else
+        {
+            m_keySinkRoot.RemoveAttribute("data-menu-mnemonics");
+        }
+    }
+    else if (m_menuBarElem.IsValid())
+    {
+        if (on)
+        {
+            m_menuBarElem.SetAttribute("data-menu-mnemonics", "1");
+        }
+        else
+        {
+            m_menuBarElem.RemoveAttribute("data-menu-mnemonics");
+        }
+    }
+    else
+    {
+        return;
+    }
+    SciterElement menuUl = m_menuBarElem.IsValid() ? m_menuBarElem.FindFirst("ul#menu-bar") : SciterElement();
+    if (menuUl.IsValid())
+    {
+        menuUl.Update(true);
+    }
+}
+
+bool WidgetMenuBar::OnKeyDown(SCITER_ELEMENT /*element*/, SCITER_ELEMENT /*item*/, SciterKeys keyCode, uint32_t /*keyboardState*/)
+{
+    if (keyCode == SCITER_KEY_LEFT_ALT)
+    {
+        if (!m_leftAltDown)
+        {
+            m_leftAltDown = true;
+            SyncMenuMnemonicsAttribute();
+        }
+    }
+    else if (keyCode == SCITER_KEY_RIGHT_ALT)
+    {
+        if (!m_rightAltDown)
+        {
+            m_rightAltDown = true;
+            SyncMenuMnemonicsAttribute();
+        }
+    }
+    return false;
+}
+
+bool WidgetMenuBar::OnKeyUp(SCITER_ELEMENT /*element*/, SCITER_ELEMENT /*item*/, SciterKeys keyCode, uint32_t /*keyboardState*/)
+{
+    if (keyCode == SCITER_KEY_LEFT_ALT)
+    {
+        m_leftAltDown = false;
+        SyncMenuMnemonicsAttribute();
+    }
+    else if (keyCode == SCITER_KEY_RIGHT_ALT)
+    {
+        m_rightAltDown = false;
+        SyncMenuMnemonicsAttribute();
+    }
+    return false;
+}
+
+bool WidgetMenuBar::OnKeyChar(SCITER_ELEMENT /*element*/, SCITER_ELEMENT /*item*/, SciterKeys /*keyCode*/, uint32_t /*keyboardState*/)
+{
+    return false;
+}
+
+void WidgetMenuBar::HideShownMenuPopup() const
+{
+    SciterElement menu = m_menuBarElem.FindFirst("menu[window-state=\"shown\"]");
+    if (menu.IsValid())
+    {
+        menu.HidePopup();
+    }
+}
+
+void WidgetMenuBar::NotifySinksMenuItem(int32_t id, SCITER_ELEMENT item) const
+{
+    for (IMenuBarSinkSet::iterator itr = m_sinks.begin(); itr != m_sinks.end(); itr++)
+    {
+        (*itr)->OnMenuItem(id, item);
+    }
+}
+
+bool WidgetMenuBar::ElementIsUnderMainMenuWidget(const SciterElement & hit, const SciterElement & mainMenuElem)
+{
+    SciterElement e(hit);
+    for (int depth = 0; depth < 64 && e.IsValid(); depth++)
+    {
+        if (e == mainMenuElem)
+        {
+            return true;
+        }
+        e = e.GetParent();
+    }
+    return false;
+}
+
+bool WidgetMenuBar::OnEvent(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t event_code, uint64_t reason)
+{
+    if (event_code != kMenuItemClickEvent || reason != kClickReasonByKey)
+    {
+        return false;
+    }
+    if (!m_menuBarElem.IsValid())
+    {
+        return false;
+    }
+    SciterElement item(source);
+    if (!item.IsValid() || !ElementIsUnderMainMenuWidget(item, m_menuBarElem))
+    {
+        return false;
+    }
+    for (uint32_t i = 0; i < 5; i++)
+    {
+        std::string menuIdvalue = item.GetAttribute("data-menu_id");
+        if (!menuIdvalue.empty())
+        {
+            HideShownMenuPopup();
+            NotifySinksMenuItem(std::stoi(menuIdvalue), item);
+            return true;
+        }
+        item = item.GetParent();
+        if (!item.IsValid())
+        {
+            break;
+        }
+    }
+    return false;
+}
+
 bool WidgetMenuBar::OnClick(SCITER_ELEMENT element, SCITER_ELEMENT source, uint32_t /*reason*/)
 {
     SciterElement item(source);
@@ -243,16 +481,8 @@ bool WidgetMenuBar::OnClick(SCITER_ELEMENT element, SCITER_ELEMENT source, uint3
     std::string menuIdvalue = item.GetAttribute("data-menu_id");
     if (!menuIdvalue.empty())
     {
-        SciterElement menu = SciterElement(element).FindFirst("menu[window-state=\"shown\"]");
-        if (menu.IsValid())
-        {
-            menu.HidePopup();
-        }
-
-        for (IMenuBarSinkSet::iterator itr = m_sinks.begin(); itr != m_sinks.end(); itr++)
-        {
-            (*itr)->OnMenuItem(std::stoi(menuIdvalue), item);
-        }
+        HideShownMenuPopup();
+        NotifySinksMenuItem(std::stoi(menuIdvalue), item);
     }
     return false;
 }
@@ -263,8 +493,12 @@ std::string WidgetMenuBar::MenuItemHtml(const MenuBarItem & item, uint32_t inden
     {
         return SciterUI::stdstr_f("%*s<hr />\n", indent, "");
     }
-    SciterUI::stdstr title(item.Title());
-    title.Replace("...", "&hellip;");
+    const std::string rawTitle = PrepareMenuTitleForMnemonics(item.Title());
+    char accesskey = 0;
+    std::string labelHtml;
+    AppendMenuTitleHtml(rawTitle, labelHtml, accesskey);
+    const std::string accesskeyAttr = accesskey ? SciterUI::stdstr_f(" accesskey=\"%c\"", accesskey) : std::string();
+    SciterUI::stdstr title;
     std::string submenu;
     if (item.SubMenu() != nullptr && item.SubMenu()->size() > 0)
     {
@@ -276,11 +510,11 @@ std::string WidgetMenuBar::MenuItemHtml(const MenuBarItem & item, uint32_t inden
     if (!submenu.empty())
     {
         submenu = SciterUI::stdstr_f("\n%*s<menu>\n%s%*s</menu>\n%*s", indent + 2, "", submenu.c_str(), indent + 2, "", indent, "");
-        title = SciterUI::stdstr_f("<li>\n%*s<caption>%s</caption>", indent + 2, "", title.c_str());
+        title = SciterUI::stdstr_f("<li%s>\n%*s<caption>%s</caption>", accesskeyAttr.c_str(), indent + 2, "", labelHtml.c_str());
     }
     else
     {
-        title = SciterUI::stdstr_f("<li data-menu_id=\"%d\"><span class='menu-item-label'>%s</span><span class='menu-accelerator'>%s</span>", item.ID(), title.c_str(), item.ShortcutAccel().Format().c_str());
+        title = SciterUI::stdstr_f("<li data-menu_id=\"%d\"%s><span class='menu-item-label'>%s</span><span class='menu-accelerator'>%s</span>", item.ID(), accesskeyAttr.c_str(), labelHtml.c_str(), item.ShortcutAccel().Format().c_str());
     }
     return SciterUI::stdstr_f("%*s%s%s</li>\n", indent, "", title.c_str(), submenu.c_str());
 }
@@ -304,7 +538,9 @@ void WidgetMenuBar::ReleaseWidget(IWidget * widget)
 
 WidgetMenuBar::WidgetMenuBar(ISciterUI & sciterUI) :
     m_sciterUI(sciterUI),
-    m_baseElement(nullptr)
+    m_baseElement(nullptr),
+    m_leftAltDown(false),
+    m_rightAltDown(false)
 {
 }
 
