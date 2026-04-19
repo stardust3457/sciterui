@@ -146,25 +146,112 @@ static std::string MenuBarAcceleratorKeyLabel(uint32_t key)
         char buf[2] = { (char)('0' + (key - (uint32_t)SCITER_KEY_0)), '\0' };
         return std::string(buf);
     }
-    if (key >= (uint32_t)SCITER_KEY_F1 && key <= (uint32_t)SCITER_KEY_F12)
+    if (key >= (uint32_t)SCITER_KEY_F1 && key <= (uint32_t)SCITER_KEY_F25)
     {
         return SciterUI::stdstr_f("F%u", (unsigned)(1u + (key - (uint32_t)SCITER_KEY_F1)));
     }
-    if (key == (uint32_t)SCITER_KEY_ESCAPE)
+    switch (key)
     {
+    case (uint32_t)SCITER_KEY_ESCAPE:
         return "Esc";
-    }
-    if (key == (uint32_t)SCITER_KEY_ENTER)
-    {
+    case (uint32_t)SCITER_KEY_ENTER:
         return "Enter";
-    }
-    if (key == (uint32_t)SCITER_KEY_TAB)
-    {
+    case (uint32_t)SCITER_KEY_TAB:
         return "Tab";
-    }
-    if (key == (uint32_t)SCITER_KEY_SPACE)
-    {
+    case (uint32_t)SCITER_KEY_BACKSPACE:
+        return "Backspace";
+    case (uint32_t)SCITER_KEY_INSERT:
+        return "Insert";
+    case (uint32_t)SCITER_KEY_DELETE:
+        return "Delete";
+    case (uint32_t)SCITER_KEY_HOME:
+        return "Home";
+    case (uint32_t)SCITER_KEY_END:
+        return "End";
+    case (uint32_t)SCITER_KEY_PAGE_UP:
+        return "PgUp";
+    case (uint32_t)SCITER_KEY_PAGE_DOWN:
+        return "PgDn";
+    case (uint32_t)SCITER_KEY_LEFT:
+        return "Left";
+    case (uint32_t)SCITER_KEY_UP:
+        return "Up";
+    case (uint32_t)SCITER_KEY_RIGHT:
+        return "Right";
+    case (uint32_t)SCITER_KEY_DOWN:
+        return "Down";
+    case (uint32_t)SCITER_KEY_CAPS_LOCK:
+        return "CapsLock";
+    case (uint32_t)SCITER_KEY_SCROLL_LOCK:
+        return "ScrollLock";
+    case (uint32_t)SCITER_KEY_NUM_LOCK:
+        return "NumLock";
+    case (uint32_t)SCITER_KEY_PRINT_SCREEN:
+        return "PrtSc";
+    case (uint32_t)SCITER_KEY_PAUSE:
+        return "Pause";
+    case (uint32_t)SCITER_KEY_SPACE:
         return "Space";
+    case (uint32_t)SCITER_KEY_MENU:
+        return "Menu";
+    case (uint32_t)SCITER_KEY_KP_0:
+        return "Numpad0";
+    case (uint32_t)SCITER_KEY_KP_1:
+        return "Numpad1";
+    case (uint32_t)SCITER_KEY_KP_2:
+        return "Numpad2";
+    case (uint32_t)SCITER_KEY_KP_3:
+        return "Numpad3";
+    case (uint32_t)SCITER_KEY_KP_4:
+        return "Numpad4";
+    case (uint32_t)SCITER_KEY_KP_5:
+        return "Numpad5";
+    case (uint32_t)SCITER_KEY_KP_6:
+        return "Numpad6";
+    case (uint32_t)SCITER_KEY_KP_7:
+        return "Numpad7";
+    case (uint32_t)SCITER_KEY_KP_8:
+        return "Numpad8";
+    case (uint32_t)SCITER_KEY_KP_9:
+        return "Numpad9";
+    case (uint32_t)SCITER_KEY_KP_DECIMAL:
+        return "Numpad.";
+    case (uint32_t)SCITER_KEY_KP_DIVIDE:
+        return "Numpad/";
+    case (uint32_t)SCITER_KEY_KP_MULTIPLY:
+        return "Numpad*";
+    case (uint32_t)SCITER_KEY_KP_SUBTRACT:
+        return "Numpad-";
+    case (uint32_t)SCITER_KEY_KP_ADD:
+        return "Numpad+";
+    case (uint32_t)SCITER_KEY_KP_ENTER:
+        return "NumpadEnter";
+    case (uint32_t)SCITER_KEY_KP_EQUAL:
+        return "Numpad=";
+    case (uint32_t)SCITER_KEY_COMMA:
+        return ",";
+    case (uint32_t)SCITER_KEY_MINUS:
+        return "-";
+    case (uint32_t)SCITER_KEY_PERIOD:
+        return ".";
+    case (uint32_t)SCITER_KEY_SLASH:
+        return "/";
+    case (uint32_t)SCITER_KEY_SEMICOLON:
+        return ";";
+    case (uint32_t)SCITER_KEY_EQUAL:
+        return "=";
+    case (uint32_t)SCITER_KEY_LEFT_BRACKET:
+        return "[";
+    case (uint32_t)SCITER_KEY_BACKSLASH:
+        return "\\";
+    case (uint32_t)SCITER_KEY_RIGHT_BRACKET:
+        return "]";
+    case (uint32_t)SCITER_KEY_GRAVE_ACCENT:
+        return "`";
+    case (uint32_t)SCITER_KEY_APOSTROPHE:
+        return "'";
+    default:
+        break;
     }
     return SciterUI::stdstr_f("%u", (unsigned)key);
 }
