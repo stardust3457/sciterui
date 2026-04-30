@@ -19,13 +19,15 @@ public:
     SciterValue(std::string Value);
     ~SciterValue();
 
+    bool isBool(void) const;
     bool isInt(void) const;
     bool isString(void) const;
+    bool GetValueBool(void) const;
     int32_t GetValueInt(void) const;
     const std::string & GetValueStr(void) const;
 
 private:
-    uint32_t m_type;
+    VALUE_TYPE m_type;
     uint32_t m_valueInt;
     std::string m_valueStr;
 };

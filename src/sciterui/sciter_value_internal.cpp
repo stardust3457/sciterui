@@ -43,6 +43,10 @@ SciterValue ConvertToSciterValue(const sciter::value & rv)
 
 sciter::value ConvertFromSciterValue(const SciterValue & rv)
 {
+    if (rv.isBool())
+    {
+        return sciter::value(rv.GetValueBool());
+    }
     if (rv.isInt())
     {
         return sciter::value(rv.GetValueInt());

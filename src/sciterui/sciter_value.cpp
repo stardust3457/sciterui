@@ -28,6 +28,11 @@ SciterValue::SciterValue(std::string Value) :
 {
 }
 
+bool SciterValue::isBool(void) const
+{
+    return m_type == TYPE_BOOL;
+}
+
 bool SciterValue::isInt(void) const
 {
     return m_type == TYPE_INT32_T;
@@ -36,6 +41,16 @@ bool SciterValue::isInt(void) const
 bool SciterValue::isString(void) const
 {
     return m_type == TYPE_STRING;
+}
+
+bool SciterValue::GetValueBool(void) const
+{
+    if (m_type != TYPE_BOOL)
+    {
+        __debugbreak();
+        return false;
+    }
+    return m_valueInt != 0;
 }
 
 int32_t SciterValue::GetValueInt(void) const
