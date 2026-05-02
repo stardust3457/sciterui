@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <vector>
 
 typedef const void * SCITER_ELEMENT;
 typedef const void * HWINDOW;
@@ -60,6 +61,7 @@ __interface ISciterUI
     bool DetachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface) = 0;
     std::shared_ptr<void> GetElementInterface(SCITER_ELEMENT elemHandle, const char * riid) = 0;
     bool SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri) = 0;
+    bool LoadResource(const char * uri, std::vector<uint8_t> & data) = 0;
     bool WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window) = 0;
     void PopupShow(SCITER_ELEMENT hePopup, SCITER_ELEMENT heAnchor, uint32_t placement) = 0;
     void PopupShowAt(SCITER_ELEMENT hePopup, SCITER_POINT pos, uint32_t placement) = 0;
