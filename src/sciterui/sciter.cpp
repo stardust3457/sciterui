@@ -130,6 +130,23 @@ bool Sciter::SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * 
     return true;
 }
 
+bool Sciter::LoadResource(const char * uri, std::vector<uint8_t> & out)
+{
+    out.clear();
+    if (uri == nullptr)
+    {
+        return false;
+    }
+    std::unique_ptr<uint8_t> data;
+    uint32_t size = 0;
+    if (!m_resourceManager.LoadResource(stdstr(uri).ToUTF16().c_str(), data, size))
+    {
+        return false;
+    }
+    out.assign(data.get(), data.get() + static_cast<size_t>(size));
+    return true;
+}
+
 bool Sciter::WindowCreate(HWINDOW parent, const char * baseHtml, int x, int y, int width, int height, unsigned int flags, ISciterWindow *& window)
 {
     std::unique_ptr<SciterWindow> sciterWindow(new SciterWindow(*this));

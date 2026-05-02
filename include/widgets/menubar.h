@@ -28,13 +28,22 @@ public:
         NO_ID = -3
     };
 
-    MenuBarItem(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr, const MenuBarAccelerator * shortcutAccel = nullptr);
-    void Reset(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr, const MenuBarAccelerator * shortcutAccel = nullptr);
+    enum class CheckState : uint8_t
+    {
+        None,
+        Unchecked,
+        Checked,
+    };
+
+    MenuBarItem(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr, const MenuBarAccelerator * shortcutAccel = nullptr, CheckState checkState = CheckState::None, const std::string * iconSvg = nullptr);
+    void Reset(int32_t id, const char * title = "", MenuBarItemList * subMenu = nullptr, const MenuBarAccelerator * shortcutAccel = nullptr, CheckState checkState = CheckState::None, const std::string * iconSvg = nullptr);
 
     int ID() const;
     const char * Title() const;
     const MenuBarItemList * SubMenu() const;
     const MenuBarAccelerator & ShortcutAccel() const;
+    CheckState ItemCheckState() const;
+    const std::string & IconSvg() const;
 
 private:
     MenuBarItem(void) = delete;
@@ -44,6 +53,8 @@ private:
     std::string m_title;
     MenuBarItemList * m_subMenu;
     MenuBarAccelerator m_shortcutAccel;
+    CheckState m_checkState;
+    std::string m_iconSvg;
 };
 
 __interface IMenuBarSink

@@ -279,16 +279,25 @@ std::string MenuBarAccelerator::Format() const
     return s;
 }
 
-MenuBarItem::MenuBarItem(int32_t id, const char * title, MenuBarItemList * subMenu, const MenuBarAccelerator * shortcutAccel)
+MenuBarItem::MenuBarItem(int32_t id, const char * title, MenuBarItemList * subMenu, const MenuBarAccelerator * shortcutAccel, CheckState checkState, const std::string * iconSvg)
 {
-    Reset(id, title, subMenu, shortcutAccel);
+    Reset(id, title, subMenu, shortcutAccel, checkState, iconSvg);
 }
 
-void MenuBarItem::Reset(int32_t id, const char * title, MenuBarItemList * subMenu, const MenuBarAccelerator * shortcutAccel)
+void MenuBarItem::Reset(int32_t id, const char * title, MenuBarItemList * subMenu, const MenuBarAccelerator * shortcutAccel, CheckState checkState, const std::string * iconSvg)
 {
     m_id = id;
     m_title = title;
     m_subMenu = subMenu;
+    m_checkState = checkState;
+    if (iconSvg != nullptr)
+    {
+        m_iconSvg = *iconSvg;
+    }
+    else
+    {
+        m_iconSvg.clear();
+    }
     if (shortcutAccel != nullptr)
     {
         m_shortcutAccel = *shortcutAccel;
@@ -317,6 +326,16 @@ const MenuBarItemList * MenuBarItem::SubMenu() const
 const MenuBarAccelerator & MenuBarItem::ShortcutAccel() const
 {
     return m_shortcutAccel;
+}
+
+MenuBarItem::CheckState MenuBarItem::ItemCheckState() const
+{
+    return m_checkState;
+}
+
+const std::string & MenuBarItem::IconSvg() const
+{
+    return m_iconSvg;
 }
 
 void WidgetMenuBar::Register(ISciterUI & sciterUI)
@@ -577,6 +596,11 @@ bool WidgetMenuBar::OnClick(SCITER_ELEMENT element, SCITER_ELEMENT source, uint3
 
 std::string WidgetMenuBar::MenuItemHtml(const MenuBarItem & item, uint32_t indent)
 {
+    enum
+    {
+        kPopupMenuMinIndent = 6
+    };
+
     if (item.ID() == MenuBarItem::SPLITER)
     {
         return SciterUI::stdstr_f("%*s<hr />\n", indent, "");
@@ -586,6 +610,28 @@ std::string WidgetMenuBar::MenuItemHtml(const MenuBarItem & item, uint32_t inden
     std::string labelHtml;
     AppendMenuTitleHtml(rawTitle, labelHtml, accesskey);
     const std::string accesskeyAttr = accesskey ? SciterUI::stdstr_f(" accesskey=\"%c\"", accesskey) : std::string();
+    SciterUI::stdstr icon;
+    if (!item.IconSvg().empty())
+    {
+        icon = std::string("<span class=\"menu-item-glyph menu-item-icon-svg\" aria-hidden=\"true\">") + item.IconSvg() + "</span>";
+    }
+    else
+    {
+        switch (item.ItemCheckState())
+        {
+        case MenuBarItem::CheckState::Unchecked: 
+            icon = "<span class='menu-item-glyph menu-item-checkbox' role='checkbox' aria-checked='false'></span>";
+            break;
+        case MenuBarItem::CheckState::Checked: 
+            icon = "<span class='menu-item-glyph menu-item-checkbox checked' role='checkbox' aria-checked='true'><span class='menu-item-checkmark'>&#x2713;</span></span>";
+            break;
+        case MenuBarItem::CheckState::None:
+        default:
+            icon = "<span class='menu-item-glyph menu-item-glyph-spacer' aria-hidden='true'></span>";
+            break;
+        }
+    }
+
     SciterUI::stdstr title;
     std::string submenu;
     if (item.SubMenu() != nullptr && item.SubMenu()->size() > 0)
@@ -598,11 +644,13 @@ std::string WidgetMenuBar::MenuItemHtml(const MenuBarItem & item, uint32_t inden
     if (!submenu.empty())
     {
         submenu = SciterUI::stdstr_f("\n%*s<menu>\n%s%*s</menu>\n%*s", indent + 2, "", submenu.c_str(), indent + 2, "", indent, "");
-        title = SciterUI::stdstr_f("<li%s>\n%*s<caption>%s</caption>", accesskeyAttr.c_str(), indent + 2, "", labelHtml.c_str());
+        const std::string glyphLead = (indent >= kPopupMenuMinIndent) ? icon : std::string();
+        title = SciterUI::stdstr_f("<li%s>\n%*s%s<caption>%s</caption>", accesskeyAttr.c_str(), indent + 2, "", glyphLead.c_str(), labelHtml.c_str());
     }
     else
     {
-        title = SciterUI::stdstr_f("<li data-menu_id=\"%d\"%s><span class='menu-item-label'>%s</span><span class='menu-accelerator'>%s</span>", item.ID(), accesskeyAttr.c_str(), labelHtml.c_str(), item.ShortcutAccel().Format().c_str());
+        const std::string glyphHtml = (indent >= kPopupMenuMinIndent) ? icon : std::string();
+        title = SciterUI::stdstr_f("<li data-menu_id=\"%d\"%s>%s<span class='menu-item-label'>%s</span><span class='menu-accelerator'>%s</span>", item.ID(), accesskeyAttr.c_str(), glyphHtml.c_str(), labelHtml.c_str(), item.ShortcutAccel().Format().c_str());
     }
     return SciterUI::stdstr_f("%*s%s%s</li>\n", indent, "", title.c_str(), submenu.c_str());
 }
