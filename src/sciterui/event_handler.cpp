@@ -285,7 +285,7 @@ int EventHandler::ForwardBehaviorHandler(void* tag, SCITER_ELEMENT he, uint32_t 
             params.name = p->name;
             params.data = p->data;
             SBOOL handled = false;
-            SCDOM_RESULT r = SciterFireEvent(&params, true, &handled);
+            SCDOM_RESULT r = SciterFireEvent(&params, false, &handled);
             assert(r == SCDOM_OK); (void)r;
             return handled != 0;
         }

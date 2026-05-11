@@ -77,7 +77,7 @@ namespace SciterUI
 
         m_select.Create("select", "");
         m_comboBoxElem.Insert(m_select, m_comboBoxElem.GetChildCount());
-        m_sciterUI.AttachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void *)((SCITER_ELEMENT)m_select));
+        m_sciterUI.AttachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void *)((SCITER_ELEMENT)m_comboBoxElem));
     }
 
     void WidgetComboBox::Detached(SCITER_ELEMENT /*Element*/)
