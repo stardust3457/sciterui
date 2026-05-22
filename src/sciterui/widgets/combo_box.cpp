@@ -82,7 +82,7 @@ namespace SciterUI
 
     void WidgetComboBox::Detached(SCITER_ELEMENT /*Element*/)
     {
-        m_sciterUI.DetachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void*)((SCITER_ELEMENT)m_select));
+        m_sciterUI.DetachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void*)((SCITER_ELEMENT)m_comboBoxElem));
         m_baseElement = nullptr;
         m_comboBoxElem = nullptr;
     }
