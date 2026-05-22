@@ -80,12 +80,12 @@ namespace SciterUI
         m_select.Create("select", "");
         m_select.SetAttribute("type", "list");
         m_listBoxElem.Insert(m_select, m_listBoxElem.GetChildCount());
-        m_sciterUI.AttachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void *)((SCITER_ELEMENT)m_select));
+        m_sciterUI.AttachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void *)((SCITER_ELEMENT)m_listBoxElem));
     }
 
     void WidgetListBox::Detached(SCITER_ELEMENT /*Element*/)
     {
-        m_sciterUI.DetachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void*)((SCITER_ELEMENT)m_select));
+        m_sciterUI.DetachHandler(m_select, IID_FORWARD_BEHAVIOUR, (void*)((SCITER_ELEMENT)m_listBoxElem));
         m_baseElement = nullptr;
         m_listBoxElem = nullptr;
     }
