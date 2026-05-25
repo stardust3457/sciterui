@@ -85,6 +85,8 @@ public:
     void OnDestroySinkAdd(IWindowDestroySink * Sink) override;
     void OnDestroySinkRemove(IWindowDestroySink * Sink) override;
     bool Destroy() override;
+    void RunModal() override;
+    bool IsClosed() const override;
 
 private:
     SciterWindow(void) = delete;
