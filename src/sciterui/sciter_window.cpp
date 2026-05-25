@@ -172,6 +172,31 @@ bool SciterWindow::Destroy()
     return PostMessage((HWND)m_hWnd, WM_CLOSE, 0, 0) != 0;
 }
 
+void SciterWindow::RunModal()
+{
+    if (m_hWnd == nullptr || m_destroyed)
+    {
+        return;
+    }
+#ifdef WIN32
+    const HWND hwnd = (HWND)m_hWnd;
+    while (!m_destroyed && IsWindow(hwnd))
+#else
+    while (!m_destroyed)
+#endif
+    {
+        if (!SciterExec(SCITER_APP_LOOP_ITERATION, 0, 0))
+        {
+            break;
+        }
+    }
+}
+
+bool SciterWindow::IsClosed() const
+{
+    return m_destroyed;
+}
+
 bool SciterWindow::GetDestroyed(void) const
 {
     return m_destroyed;

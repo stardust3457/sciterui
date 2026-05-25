@@ -28,6 +28,8 @@ __interface ISciterWindow
     void OnDestroySinkAdd(IWindowDestroySink * Sink) = 0;
     void OnDestroySinkRemove(IWindowDestroySink * Sink) = 0;
     bool Destroy() = 0;
+    void RunModal() = 0;
+    bool IsClosed() const = 0;
 };
 
 __interface IBaseElement
