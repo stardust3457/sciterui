@@ -16,6 +16,11 @@ __interface IWindowDestroySink
     void OnWindowDestroy(HWINDOW hWnd);
 };
 
+__interface IWindowCloseSink
+{
+    bool OnWindowCloseRequest(HWINDOW hWnd);
+};
+
 __interface ISciterWindow
 {
     void Show() = 0;
@@ -27,6 +32,8 @@ __interface ISciterWindow
     SCITER_ELEMENT GetRootElement() const = 0;
     void OnDestroySinkAdd(IWindowDestroySink * Sink) = 0;
     void OnDestroySinkRemove(IWindowDestroySink * Sink) = 0;
+    void OnCloseSinkAdd(IWindowCloseSink * Sink) = 0;
+    void OnCloseSinkRemove(IWindowCloseSink * Sink) = 0;
     bool Destroy() = 0;
     void RunModal() = 0;
     bool IsClosed() const = 0;

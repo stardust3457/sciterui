@@ -63,6 +63,7 @@ class SciterWindow :
     typedef ElementEventProc * LPELEMENT_EVENT_PROC;
 
     typedef std::set<IWindowDestroySink *> WinDestroySinks;
+    typedef std::set<IWindowCloseSink *> WinCloseSinks;
 
 public:
     SciterWindow(Sciter & sciter);
@@ -84,9 +85,13 @@ public:
     SCITER_ELEMENT GetRootElement() const override;
     void OnDestroySinkAdd(IWindowDestroySink * Sink) override;
     void OnDestroySinkRemove(IWindowDestroySink * Sink) override;
+    void OnCloseSinkAdd(IWindowCloseSink * Sink) override;
+    void OnCloseSinkRemove(IWindowCloseSink * Sink) override;
     bool Destroy() override;
     void RunModal() override;
     bool IsClosed() const override;
+
+    friend class Sciter;
 
 private:
     SciterWindow(void) = delete;
@@ -121,6 +126,7 @@ private:
     int64_t OnLoadData(LPSCN_LOAD_DATA pnmld);
     int64_t OnAttachBehavior(LPSCN_ATTACH_BEHAVIOR pnmld);
     int64_t OnEngineDestroyed(void);
+    bool QueryClose() const;
 
     static uint32_t SC_CALLBACK SciterCallback(LPSCITER_CALLBACK_NOTIFICATION pnm, void * param);
 
@@ -129,6 +135,7 @@ private:
     HWINDOW m_hParent;
     EventSinks m_eventSinks;
     WinDestroySinks m_onDestroySink;
+    WinCloseSinks m_onCloseSink;
     bool m_bound;
     bool m_destroyed;
 };

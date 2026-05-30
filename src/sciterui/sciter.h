@@ -64,6 +64,7 @@ public:
     bool Initialize(const char * baseLanguage, const char * currentLanguage, bool console);
     void WindowCreated(SciterWindow * window);
     void WindowDestroyed(SciterWindow * window);
+    SciterWindow * FindSciterWindow(HWINDOW hwnd) const;
     uint32_t AttachWidget(LPSCN_ATTACH_BEHAVIOR lpab);
 
     // ISciterUI
