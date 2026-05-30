@@ -39,16 +39,12 @@ bool Sciter::AttachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * 
         return false;
     }
     HWINDOW hWnd = SciterElement(elemHandle).GetElementHwnd(true);
-    for (WindowSet::const_iterator itr = m_windows.begin(); itr != m_windows.end(); itr++)
+    SciterWindow * window = FindSciterWindow(hWnd);
+    if (window == nullptr)
     {
-        SciterWindow * window = *itr;
-        if (window->GetHandle() != hWnd)
-        {
-            continue;
-        }
-        return window->AttachHandler(elemHandle, riid, pinterface);
+        return false;
     }
-    return false;
+    return window->AttachHandler(elemHandle, riid, pinterface);
 }
 
 bool Sciter::DetachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * pinterface)
@@ -58,20 +54,12 @@ bool Sciter::DetachHandler(SCITER_ELEMENT elemHandle, const char * riid, void * 
         return false;
     }
     HWINDOW hWnd = SciterElement(elemHandle).GetElementHwnd(true);
-    for (WindowSet::const_iterator itr = m_windows.begin(); itr != m_windows.end(); itr++)
+    SciterWindow * window = FindSciterWindow(hWnd);
+    if (window == nullptr)
     {
-        SciterWindow * Window = *itr;
-        if (Window->GetHandle() != hWnd)
-        {
-            continue;
-        }
-        if (Window->DetachHandler(elemHandle, riid, pinterface))
-        {
-            return true;
-        }
-        break;
+        return false;
     }
-    return false;
+    return window->DetachHandler(elemHandle, riid, pinterface);
 }
 
 std::shared_ptr<void> Sciter::GetElementInterface(SCITER_ELEMENT he, const char * riid)
@@ -110,6 +98,19 @@ void Sciter::WindowDestroyed(SciterWindow * window)
         }
         m_windows.erase(itr);
     }
+}
+
+SciterWindow * Sciter::FindSciterWindow(HWINDOW hwnd) const
+{
+    for (WindowSet::const_iterator itr = m_windows.begin(); itr != m_windows.end(); itr++)
+    {
+        SciterWindow * window = *itr;
+        if (window->GetHandle() == hwnd)
+        {
+            return window;
+        }
+    }
+    return nullptr;
 }
 
 bool Sciter::SetElementHtmlFromResource(SCITER_ELEMENT elemHandle, const char * uri)
@@ -309,6 +310,18 @@ LRESULT CALLBACK Sciter::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 pmmi->ptMinTrackSize.x = minWidth;
                 pmmi->ptMinTrackSize.y = minHeight;
                 return lr;
+            }
+        }
+        break;
+    }
+    case WM_CLOSE: {
+        Sciter * sciter = (Sciter *)GetWindowLongPtr(hwnd, 0);
+        if (sciter != nullptr)
+        {
+            SciterWindow * window = sciter->FindSciterWindow(hwnd);
+            if (window != nullptr && !window->QueryClose())
+            {
+                return 0;
             }
         }
         break;
