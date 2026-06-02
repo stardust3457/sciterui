@@ -127,6 +127,9 @@ private:
     Sciter & m_sciter;
     HWINDOW m_hWnd;
     HWINDOW m_hParent;
+    HWINDOW m_createParent;
+    int m_layoutWidth;
+    int m_layoutHeight;
     EventSinks m_eventSinks;
     WinDestroySinks m_onDestroySink;
     bool m_bound;
