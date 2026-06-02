@@ -206,6 +206,32 @@ void SciterWindow::OnDestroySinkRemove(IWindowDestroySink * Sink)
     }
 }
 
+void SciterWindow::OnCloseSinkAdd(IWindowCloseSink * Sink)
+{
+    m_onCloseSink.insert(Sink);
+}
+
+void SciterWindow::OnCloseSinkRemove(IWindowCloseSink * Sink)
+{
+    WinCloseSinks::iterator itr = m_onCloseSink.find(Sink);
+    if (itr != m_onCloseSink.end())
+    {
+        m_onCloseSink.erase(itr);
+    }
+}
+
+bool SciterWindow::QueryClose() const
+{
+    for (WinCloseSinks::const_iterator itr = m_onCloseSink.begin(); itr != m_onCloseSink.end(); itr++)
+    {
+        if (!(*itr)->OnWindowCloseRequest(m_hWnd))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool SciterWindow::Destroy()
 {
     return PostMessage((HWND)m_hWnd, WM_CLOSE, 0, 0) != 0;
